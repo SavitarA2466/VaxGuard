@@ -1,5 +1,5 @@
 import React from "react";
-import { MenuSelect } from "../../Components/Form";
+import { MenuSelectNav } from "../../Components/Form";
 import { TbUser } from "react-icons/tb";
 import { AiOutlinePoweroff } from "react-icons/ai";
 import { MdOutlineNotificationsNone } from "react-icons/md";
@@ -12,7 +12,7 @@ import useGlobalStore from "../../globalStore";
 function Header() {
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const { user } = useGlobalStore();
+  const { user, setUser } = useGlobalStore();
 
   // toggle drawer
   const toggleDrawer = () => {
@@ -22,6 +22,7 @@ function Header() {
   const navigate = useNavigate();
   const DropDown1 = [
     {
+      id: 1,
       title: "Profile",
       icon: TbUser,
       onClick: () => {
@@ -29,10 +30,13 @@ function Header() {
       },
     },
     {
+      id: 2,
       title: "Logout",
       icon: AiOutlinePoweroff,
       onClick: () => {
-        navigate("/login");
+        localStorage.removeItem("token");
+        setUser(null);
+        navigate("/");
       },
     },
   ];
@@ -69,7 +73,7 @@ function Header() {
             </NotificationComp>
 
             <div className="items-center hidden md:flex">
-              <MenuSelect datas={DropDown1}>
+              <MenuSelectNav datas={DropDown1}>
                 <div className="flex items-center gap-4 p-4 rounded-lg">
                   <img
                     src="/images/user1.png"
@@ -80,7 +84,7 @@ function Header() {
                     {user.firstName}
                   </p>
                 </div>
-              </MenuSelect>
+              </MenuSelectNav>
             </div>
           </div>
         </div>

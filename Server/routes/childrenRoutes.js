@@ -36,6 +36,23 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/recent", async (req, res) => {
+  try {
+    const children = await Child.find()
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .populate("parent");
+    const formatted = children.map((c) => ({
+      id: c._id,
+      name: c.fullName,
+      phone: c.parent.phoneNumber,
+    }));
+    res.status(200).json(formatted);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
 router.get("/mine/:parentId", async (req, res) => {
   try {
     const parentId = req.params.parentId;

@@ -1,99 +1,100 @@
-import React from 'react';
-import Layout from '../Layout/DoctorLayout/D.index';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';
-import { BiChevronLeft, BiChevronRight, BiPlus, BiTime } from 'react-icons/bi';
-import { HiOutlineViewGrid } from 'react-icons/hi';
-import { HiOutlineCalendarDays } from 'react-icons/hi2';
-import DAddAppointmentModal from '../Components/Modals/D.AddApointmentModal';
-import { servicesData } from '../Components/Datas';
+import React from "react";
+import Layout from "../Layout/DoctorLayout/D.index";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
+import { BiChevronLeft, BiChevronRight, BiPlus, BiTime } from "react-icons/bi";
+import { HiOutlineViewGrid } from "react-icons/hi";
+import { HiOutlineCalendarDays } from "react-icons/hi2";
+import DAddAppointmentModal from "../Components/Modals/D.AddApointmentModal";
+import { servicesData } from "../Components/Datas";
+import { useDoctorAppointments } from "../hooks/useDoctorAppointments";
 
 // custom toolbar
 const CustomToolbar = (toolbar) => {
   // today button handler
   const goToBack = () => {
     toolbar.date.setMonth(toolbar.date.getMonth() - 1);
-    toolbar.onNavigate('prev');
+    toolbar.onNavigate("prev");
   };
 
   // next button handler
   const goToNext = () => {
     toolbar.date.setMonth(toolbar.date.getMonth() + 1);
-    toolbar.onNavigate('next');
+    toolbar.onNavigate("next");
   };
 
   // today button handler
   const goToCurrent = () => {
-    toolbar.onNavigate('TODAY');
+    toolbar.onNavigate("TODAY");
   };
 
   // month button handler
   const goToMonth = () => {
-    toolbar.onView('month');
+    toolbar.onView("month");
   };
 
   // week button handler
   const goToWeek = () => {
-    toolbar.onView('week');
+    toolbar.onView("week");
   };
 
   // day button handler
   const goToDay = () => {
-    toolbar.onView('day');
+    toolbar.onView("day");
   };
 
   // view button group
   const viewNamesGroup = [
-    { view: 'month', label: 'Month' },
-    { view: 'week', label: 'Week' },
-    { view: 'day', label: 'Day' },
+    { view: "month", label: "Month" },
+    { view: "week", label: "Week" },
+    { view: "day", label: "Day" },
   ];
 
   return (
     <div className="flex flex-col gap-8 mb-8">
       <h1 className="text-xl font-semibold">Appointments</h1>
-      <div className="grid sm:grid-cols-2 md:grid-cols-12 gap-4">
-        <div className="md:col-span-1 flex sm:justify-start justify-center items-center">
+      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-12">
+        <div className="flex items-center justify-center md:col-span-1 sm:justify-start">
           <button
             onClick={goToCurrent}
-            className="px-6 py-2 border border-subMain rounded-md text-subMain"
+            className="px-6 py-2 border rounded-md border-subMain text-subMain"
           >
             Today
           </button>
         </div>
         {/* label */}
-        <div className="md:col-span-9 flex-rows gap-4">
+        <div className="gap-4 md:col-span-9 flex-rows">
           <button onClick={goToBack} className="text-2xl text-subMain">
             <BiChevronLeft />
           </button>
           <span className="text-xl font-semibold">
-            {moment(toolbar.date).format('MMMM YYYY')}
+            {moment(toolbar.date).format("MMMM YYYY")}
           </span>
           <button onClick={goToNext} className="text-2xl text-subMain">
             <BiChevronRight />
           </button>
         </div>
         {/* filter */}
-        <div className="md:col-span-2 grid grid-cols-3 rounded-md  border border-subMain">
+        <div className="grid grid-cols-3 border rounded-md md:col-span-2 border-subMain">
           {viewNamesGroup.map((item, index) => (
             <button
               key={index}
               onClick={
-                item.view === 'month'
+                item.view === "month"
                   ? goToMonth
-                  : item.view === 'week'
+                  : item.view === "week"
                   ? goToWeek
                   : goToDay
               }
               className={`border-l text-xl py-2 flex-colo border-subMain ${
                 toolbar.view === item.view
-                  ? 'bg-subMain text-white'
-                  : 'text-subMain'
+                  ? "bg-subMain text-white"
+                  : "text-subMain"
               }`}
             >
-              {item.view === 'month' ? (
+              {item.view === "month" ? (
                 <HiOutlineViewGrid />
-              ) : item.view === 'week' ? (
+              ) : item.view === "week" ? (
                 <HiOutlineCalendarDays />
               ) : (
                 <BiTime />
@@ -117,21 +118,7 @@ function DAppointments() {
     setData({});
   };
 
-  const events = [
-    {
-      id: 0,
-      start: moment({ hours: 7 }).toDate(),
-      end: moment({ hours: 9 }).toDate(),
-      color: '#FB923C',
-      title: 'John Doe',
-      message: 'He is not sure about the time',
-      service: servicesData[1],
-      shareData: {
-        email: true,
-      },
-    },
-   
-  ];
+  const { data: events } = useDoctorAppointments();
 
   // onClick event handler
   const handleEventClick = (event) => {
@@ -170,14 +157,14 @@ function DAppointments() {
         // custom event style
         eventPropGetter={(event) => {
           const style = {
-            backgroundColor: '#66B5A3',
+            backgroundColor: "#66B5A3",
 
-            borderRadius: '10px',
-            color: 'white',
-            border: '1px',
-            borderColor: '#F2FAF8',
-            fontSize: '12px',
-            padding: '5px 5px',
+            borderRadius: "10px",
+            color: "white",
+            border: "1px",
+            borderColor: "#F2FAF8",
+            fontSize: "12px",
+            padding: "5px 5px",
           };
           return {
             style,
@@ -185,7 +172,7 @@ function DAppointments() {
         }}
         // custom date style
         dayPropGetter={(date) => {
-          const backgroundColor = 'white';
+          const backgroundColor = "white";
           const style = {
             backgroundColor,
           };
@@ -194,7 +181,7 @@ function DAppointments() {
           };
         }}
         // remove agenda view
-        views={['month', 'day', 'week']}
+        views={["month", "day", "week"]}
         // toolbar={false}
         components={{ toolbar: CustomToolbar }}
       />
@@ -203,4 +190,3 @@ function DAppointments() {
 }
 
 export default DAppointments;
-

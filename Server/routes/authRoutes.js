@@ -47,7 +47,7 @@ router.post("/login", async (req, res) => {
       return res.status(400).send("Invalid email or password");
 
     const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "10h",
     });
     res.status(200).json({ token, user });
   } catch (error) {
@@ -70,7 +70,8 @@ const authenticateToken = (req, res, next) => {
 
 router.get("/me", authenticateToken, async (req, res) => {
   try {
-    res.status(200).json(req.user);
+    const user = await User.findById(req.user.userId);
+    res.status(200).json(user);
   } catch (error) {
     console.error(error);
     res.status(500).send("Server error");

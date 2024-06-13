@@ -11,7 +11,6 @@ import {
 import { BiChevronDown } from "react-icons/bi";
 import { HiOutlineCheckCircle } from "react-icons/hi";
 import { toast } from "react-hot-toast";
-import UPatientMedicineServiceModal from "./U.PatientMedicineServiceModal";
 import { useDoctors } from "../../hooks/useDoctors";
 import { useServices } from "../../hooks/useServices";
 import { useMyChildren } from "../../hooks/useMyChildren";
@@ -68,8 +67,6 @@ function UAddAppointmentModal({ closeModal, isOpen, datas }) {
       toast.error("Appointment creation failed");
     }
   }
-
-  console.log(child, services, doctors);
 
   return (
     <Modal

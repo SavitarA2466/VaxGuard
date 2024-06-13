@@ -1,5 +1,5 @@
 import "./App.css";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Aos from "aos";
 import Toast from "./Components/Notifications/Toast";
@@ -45,75 +45,113 @@ import Signup from "./Signup";
 import ProtectedAdminRoutes from "./Protected/ProtectedAdminRoutes";
 import ProtectedUserRoutes from "./Protected/ProtectedUserRoutes";
 import ProtectedDoctorRoutes from "./Protected/ProtectedDoctorRoutes";
+import axios from "axios";
+import useGlobalStore from "./globalStore";
+import { BiLoader } from "react-icons/bi";
 
 function App() {
   Aos.init();
+
+  const { setUser } = useGlobalStore();
+
+  const [appLoading, setApploading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    axios
+      .get("http://localhost:5000/api/auth/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          setUser(res.data);
+        } else {
+          localStorage.removeItem("token");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        localStorage.removeItem("token");
+      })
+      .finally(() => setApploading(false));
+  }, []);
 
   return (
     <>
       {/* Toaster */}
       <Toast />
       {/* Routes */}
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
+      {appLoading ? (
+        <div>
+          <BiLoader />
+        </div>
+      ) : (
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
 
-          {/* Admin */}
-          <Route element={<ProtectedAdminRoutes />}>
-            <Route path="/adminDashboard" element={<AdminDashboard />} />
-            <Route path="/A.patients" element={<AdminPatients />} />
-            <Route
-              path="/A.patients/preview/:id"
-              element={<AdminPatientProfile />}
-            />
-            <Route path="/A.patients/create" element={<AdminCreatePatient />} />
-            <Route path="/A.doctors" element={<AdminDoctors />} />
-            <Route
-              path="/A.doctors/preview/:id"
-              element={<AdminDoctorProfile />}
-            />
-            <Route path="/A.appointments" element={<AdminAppointments />} />
-            <Route path="/A.announcement" element={<AdminAnnouncement />} />
-            <Route path="/A.vaccine" element={<Vaccine />} />
-            <Route path="/A.services" element={<AdminServices />} />
-            <Route path="/A.settings" element={<AdminSettings />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
+            {/* Admin */}
+            <Route element={<ProtectedAdminRoutes />}>
+              <Route path="/adminDashboard" element={<AdminDashboard />} />
+              <Route path="/A.patients" element={<AdminPatients />} />
+              <Route
+                path="/A.patients/preview/:id"
+                element={<AdminPatientProfile />}
+              />
+              <Route
+                path="/A.patients/create"
+                element={<AdminCreatePatient />}
+              />
+              <Route path="/A.doctors" element={<AdminDoctors />} />
+              <Route
+                path="/A.doctors/preview/:id"
+                element={<AdminDoctorProfile />}
+              />
+              <Route path="/A.appointments" element={<AdminAppointments />} />
+              <Route path="/A.announcement" element={<AdminAnnouncement />} />
+              <Route path="/A.vaccine" element={<Vaccine />} />
+              <Route path="/A.services" element={<AdminServices />} />
+              <Route path="/A.settings" element={<AdminSettings />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
 
-          {/* Doctor */}
-          <Route element={ProtectedDoctorRoutes}>
-            <Route path="/doctorDashboard" element={<DoctorDashboard />} />
-            <Route path="/D.Patients" element={<DoctorPatients />} />
-            <Route
-              path="/D.Patients/D.PatientProfile"
-              element={<DoctorPatientProfile />}
-            />
-            <Route
-              path="/D.patients/preview/:id"
-              element={<DoctorPatientProfile />}
-            />
-            <Route path="/D.appointments" element={<DoctorAppointments />} />
-            <Route path="/D.announcement" element={<DoctorAnnouncement />} />
-            <Route
-              path="/D.patients/visiting/:id"
-              element={<DNewMedicalRecode />}
-            />
-            <Route path="/D.settings" element={<DoctorSettings />} />
-          </Route>
-          {/* User */}
-          <Route element={<ProtectedUserRoutes />}>
-            <Route path="/userDashboard" element={<UserDashboard />} />
-            <Route path="/U.appointments" element={<UserAppointments />} />
-            <Route path="/U.Doctors" element={<UserDoctors />} />
-            <Route path="/U.announcement" element={<UserAnnouncement />} />
-            <Route path="/U.settings" element={<UserSettings />} />
-            <Route path="/child" element={<Child />} />
-            <Route path="/child/profile/:id" element={<ChildProfile />} />
-            <Route path="/child/create" element={<CreateChild />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+            {/* Doctor */}
+            <Route element={<ProtectedDoctorRoutes />}>
+              <Route path="/doctorDashboard" element={<DoctorDashboard />} />
+              <Route path="/D.Patients" element={<DoctorPatients />} />
+              <Route
+                path="/D.Patients/D.PatientProfile"
+                element={<DoctorPatientProfile />}
+              />
+              <Route
+                path="/D.patients/preview/:id"
+                element={<DoctorPatientProfile />}
+              />
+              <Route path="/D.appointments" element={<DoctorAppointments />} />
+              <Route path="/D.announcement" element={<DoctorAnnouncement />} />
+              <Route
+                path="/D.patients/visiting/:id"
+                element={<DNewMedicalRecode />}
+              />
+              <Route path="/D.settings" element={<DoctorSettings />} />
+            </Route>
+            {/* User */}
+            <Route element={<ProtectedUserRoutes />}>
+              <Route path="/userDashboard" element={<UserDashboard />} />
+              <Route path="/U.appointments" element={<UserAppointments />} />
+              <Route path="/U.Doctors" element={<UserDoctors />} />
+              <Route path="/U.announcement" element={<UserAnnouncement />} />
+              <Route path="/U.settings" element={<UserSettings />} />
+              <Route path="/child" element={<Child />} />
+              <Route path="/child/profile/:id" element={<ChildProfile />} />
+              <Route path="/child/create" element={<CreateChild />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      )}
     </>
   );
 }

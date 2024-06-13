@@ -23,6 +23,9 @@ const appointmentSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  endTime: {
+    type: Date,
+  },
   doctor: {
     type: Schema.ObjectId,
     ref: "Doctor",
@@ -30,6 +33,10 @@ const appointmentSchema = new mongoose.Schema({
   description: {
     type: String,
     required: true,
+  },
+  status: {
+    type: String,
+    default: "Pending",
   },
   shareWithEmail: {
     type: Boolean,

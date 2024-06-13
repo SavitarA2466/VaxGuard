@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import useGlobalStore from "./globalStore";
 
 const Login = () => {
@@ -10,7 +10,7 @@ const Login = () => {
     password: "",
   });
 
-  const { setUser } = useGlobalStore();
+  const { setUser, user } = useGlobalStore();
 
   const [passwordError, setPasswordError] = useState("");
 
@@ -49,6 +49,16 @@ const Login = () => {
       alert("Login failed");
     }
   };
+
+  if (user && user.role === "admin") {
+    return <Navigate to="/adminDashboard" />;
+  }
+  if (user && user.role === "doctor") {
+    return <Navigate to="/doctorDashboard" />;
+  }
+  if (user && user.role === "user") {
+    return <Navigate to="/userDashboard" />;
+  }
 
   return (
     <div className="w-full h-screen flex-colo bg-dry">

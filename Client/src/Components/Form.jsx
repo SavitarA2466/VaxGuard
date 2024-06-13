@@ -83,6 +83,30 @@ export function MenuSelect({ children, datas, item }) {
   );
 }
 
+export function MenuSelectNav({ children, datas }) {
+  return (
+    <div className="relative w-full text-sm">
+      <Menu>
+        <Menu.Button>{children}</Menu.Button>
+        <Menu.Items className="absolute left-0 z-50 flex flex-col gap-4 px-6 py-4 bg-white rounded-md shadow-lg ring-1 ring-border focus:outline-none">
+          {datas.map((menuItem, index) => (
+            <button
+              onClick={() => menuItem.onClick()} // Check if item is defined and has an id property before accessing it
+              key={index}
+              className={`flex gap-4 items-center hover:text-subMain`}
+            >
+              {menuItem.icon && (
+                <menuItem.icon className="text-md text-subMain" />
+              )}
+              {menuItem.title}
+            </button>
+          ))}
+        </Menu.Items>
+      </Menu>
+    </div>
+  );
+}
+
 // select 2
 
 export function Select({

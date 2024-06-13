@@ -11,6 +11,7 @@ const Signup = () => {
     phoneNumber: '',
     password: '',
     confirmPassword: '',
+    role: 'user', // Default role is 'user'
   });
 
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
@@ -114,6 +115,14 @@ const Signup = () => {
           {confirmPasswordError && (
             <p className="text-red-500 text-sm mt-1">{confirmPasswordError}</p>
           )}
+          <label htmlFor="role">Role</label>
+          <input
+            type="text"
+            name="role"
+            className="p-2 border border-gray-300 rounded-md w-full"
+            value={formData.role}
+            disabled // Disable editing of role
+          />
         </div>
         <div className="flex flex-col gap-4 w-full">
           <button

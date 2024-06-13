@@ -12,7 +12,8 @@ import {
   medicineData, 
 } from '../Components/Datas';
 import { Link } from 'react-router-dom';
-import { ServiceTable, VaccineTable } from '../Components/Tables'; 
+import { ServiceTable } from '../Components/Tables/ServiceTable'; 
+import { VaccineTable } from '../Components/Tables/VaccineTable'; 
 
 function DoctorDashboard() {
   const handleEditService = (item) => {
@@ -100,7 +101,7 @@ function DoctorDashboard() {
           {/* Recent Patients */}
           <div className="bg-white rounded-xl border-[1px] border-border p-5">
             <h2 className="text-sm font-medium">Recent Patients</h2>
-            {memberData.slice(3, 8).map((member, index) => (
+            {memberData.slice(0, 5).map((member, index) => (
               <Link
                 to={`/D.patients/preview/${member.id}`}
                 key={index}

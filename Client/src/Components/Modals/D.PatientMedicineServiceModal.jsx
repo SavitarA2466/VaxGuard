@@ -1,19 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
 import { BiSearch, BiPlus } from 'react-icons/bi';
-import { memberData, medicineData } from '../Datas';
 import { RadioGroup } from '@headlessui/react';
 import { Button } from '../Form';
+import axios from 'axios';
 
 function DPatientMedicineServiceModal({ closeModal, isOpen, patient }) {
-  const [selected, setSelected] = useState(memberData[0]);
-  const datas = patient ? memberData : medicineData.sort((a, b) => a.name.localeCompare(b.name));
+  const [selected, setSelected] = useState(""); // State to hold the selected item
+  const [vaccine, setVaccine] = useState([]);
+
+  useEffect(() => {
+    const fetchVaccine = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/vaccines'); // Assuming your backend endpoint is /vaccines
+        setVaccine(response.data);
+      } catch (error) {
+        console.error('Error fetching Vaccine:', error);
+      }
+    };
+    fetchVaccine();
+  }, []);
+
+  // Function to handle selection of an item
+  const handleSelectItem = (item) => {
+    setSelected(item); // Update selected item
+  };
+  console.log(selected);
+
+  // Function to add selected item
+  const handleAddItem = () => {
+    // Pass selected item to another component
+    // Assuming you have a prop named "addItem" to pass the selected item
+    closeModal(selected);
+  };
+
+  const vaccineData = vaccine.map((item) => ({
+    id: item._id,
+    name: item.vaccineName,
+   
+  }));
 
   return (
     <Modal
       closeModal={closeModal}
-      isOpen={isOpen}
-      title={patient ? 'Patients' : 'Medicine'}
+      isOpen
       width={'max-w-xl'}
     >
       <div className="flex-colo gap-6">
@@ -24,9 +54,9 @@ function DPatientMedicineServiceModal({ closeModal, isOpen, patient }) {
         </div>
         {/* data */}
         <div className="w-full h-[500px] overflow-y-scroll">
-          <RadioGroup value={selected} onChange={setSelected}>
+          <RadioGroup value={selected} onChange={handleSelectItem}>
             <div className="space-y-2">
-              {datas.map((item) => (
+              {vaccineData.map((item) => (
                 <RadioGroup.Option
                   key={item.id}
                   value={item}
@@ -38,18 +68,9 @@ function DPatientMedicineServiceModal({ closeModal, isOpen, patient }) {
                 >
                   {({ active, checked }) => (
                     <>
-                      <h6 className="text-sm">
-                        {patient ? item.title : item.name}
-                      </h6>
-                      {patient && (
-                        <p
-                          className={`${
-                            active && 'text-white'
-                          } text-xs group-hover:text-white text-textGray mt-1`}
-                        >
-                          {item.email}
-                        </p>
-                      )}
+                      <h6 className="text-sm">{item.name}</h6>
+                      {/* Add other details you want to display */}
+                      {/* Example: <p>{item.description}</p> */}
                     </>
                   )}
                 </RadioGroup.Option>
@@ -58,7 +79,8 @@ function DPatientMedicineServiceModal({ closeModal, isOpen, patient }) {
           </RadioGroup>
         </div>
         {/* button */}
-        <Button onClick={closeModal} label="Add" Icon={BiPlus} />
+        {/* Pass selected item to another component */}
+        <Button onClick={handleAddItem} label="Add" Icon={BiPlus} />
       </div>
     </Modal>
   );

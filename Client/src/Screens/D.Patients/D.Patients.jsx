@@ -7,29 +7,13 @@ import { BsCalendarMonth } from 'react-icons/bs';
 import { MdFilterList, MdOutlineCalendarMonth } from 'react-icons/md';
 import { toast } from 'react-hot-toast';
 import { Button, FromToDate, Select } from '../../Components/Form';
-import { DPatientTable } from '../../Components/Tables';
+import { DPatientTable } from '../../Components/Tables/D.PatientTable';
 
 function DPatients() {
-  const [status, setStatus] = useState(sortsDatas.filterPatient[0]);
-  const [gender, setGender] = useState(sortsDatas.genderFilter[0]);
   const [dateRange, setDateRange] = useState([new Date(), new Date()]);
   const [startDate, endDate] = dateRange;
   const navigate = useNavigate();
 
-  const sorts = [
-    {
-      id: 2,
-      selected: status,
-      setSelected: setStatus,
-      datas: sortsDatas.filterPatient,
-    },
-    {
-      id: 3,
-      selected: gender,
-      setSelected: setGender,
-      datas: sortsDatas.genderFilter,
-    },
-  ];
   // boxes
   const boxes = [
     {
@@ -94,42 +78,6 @@ function DPatients() {
         data-aos-offset="200"
         className="bg-white my-8 rounded-xl border-[1px] border-border p-5"
       >
-        <div className="grid lg:grid-cols-5 grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-2">
-          <input
-            type="text"
-            placeholder='Search "Patients"'
-            className="h-14 text-sm text-main rounded-md bg-dry border border-border px-4"
-          />
-          {/* sort  */}
-          {sorts.map((item) => (
-            <Select
-              key={item.id}
-              selectedPerson={item.selected}
-              setSelectedPerson={item.setSelected}
-              datas={item.datas}
-            >
-              <div className="h-14 w-full text-xs text-main rounded-md bg-dry border border-border px-4 flex items-center justify-between">
-                <p>{item.selected.name}</p>
-                <BiChevronDown className="text-xl" />
-              </div>
-            </Select>
-          ))}
-          {/* date */}
-          <FromToDate
-            startDate={startDate}
-            endDate={endDate}
-            bg="bg-dry"
-            onChange={(update) => setDateRange(update)}
-          />
-          {/* export */}
-          <Button
-            label="Filter"
-            Icon={MdFilterList}
-            onClick={() => {
-              toast.error('Filter data is not available yet');
-            }}
-          />
-        </div>
         <div className="mt-8 w-full overflow-x-scroll">
           <DPatientTable
             data={memberData}

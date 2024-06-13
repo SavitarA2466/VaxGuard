@@ -1,5 +1,5 @@
 import React from 'react';
-import { APatientTable } from '../Tables';
+import  { APatientTable }  from '../Tables';
 import { useNavigate } from 'react-router-dom';
 import { memberData } from '../Datas';
 
@@ -7,7 +7,7 @@ function APatientsUsed() {
   const navigate = useNavigate();
   // preview
   const preview = (id) => {
-    navigate(`/patients/preview/${id}`);
+    navigate(`/A.patients/preview/${id}`);
   };
   return (
     <div className="w-full">

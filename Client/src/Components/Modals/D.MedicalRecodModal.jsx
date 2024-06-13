@@ -1,8 +1,8 @@
 import React from 'react';
 import Modal from './Modal';
-import { Button } from '../Form';
+import { Button, Textarea } from '../Form';
 import { FiEye } from 'react-icons/fi';
-import { VaccineDosageTable } from '../Tables';
+import { VaccineDosageTable } from '../Tables/VaccineDosageTable';
 import { medicineData } from '../Datas';
 import { useNavigate } from 'react-router-dom';
 
@@ -28,6 +28,13 @@ function DMedicalRecodModal({ closeModal, isOpen, datas }) {
             </div>
           </div>
         ))}
+
+        <Textarea
+          label="Description"
+          placeholder="Write description here..."
+          color={true}
+          rows={5}
+        />  
         
         {/* medicine */}
         <div className="grid grid-cols-12 gap-4 w-full">
@@ -42,26 +49,6 @@ function DMedicalRecodModal({ closeModal, isOpen, datas }) {
             />
           </div>
         </div>
-        {/* attachments */}
-        <div className="grid grid-cols-12 gap-4 w-full">
-          <div className="col-span-12 md:col-span-3">
-            <p className="text-sm font-medium">Attachments:</p>
-          </div>
-          <div className="col-span-12 md:col-span-9 border-[1px] border-border rounded-xl p-6 xs:grid-cols-2 md:grid-cols-4 grid gap-4">
-            {
-              // show attachments
-              datas?.attachments?.map((item) => (
-                <img
-                  key={item}
-                  src={item}
-                  alt="attachment"
-                  className="w-full md:h-32 object-cover rounded-md"
-                />
-              ))
-            }
-          </div>
-        </div>
-
       </div>
     </Modal>
   );

@@ -73,7 +73,7 @@ function Header() {
                     alt="user"
                     className="w-12 border border-border object-cover h-12 rounded-full"
                   />
-                  <p className="text-sm text-textGray font-medium">Dr. Daudi</p>
+                  <p className="text-sm text-textGray font-medium">Admin</p>
                 </div>
               </MenuSelect>
             </div>

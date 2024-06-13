@@ -4,7 +4,7 @@ import { toast } from 'react-hot-toast';
 import { BiPlus } from 'react-icons/bi';
 import Layout from '../../Layout/UserLayout/U.index';
 import { Button } from '../../Components/Form';
-import { UDoctorsTable } from '../../Components/Tables';
+import { UDoctorsTable } from '../../Components/Tables/U.DoctorTable';
 import { doctorsData } from '../../Components/Datas';
 import { useNavigate } from 'react-router-dom';
 

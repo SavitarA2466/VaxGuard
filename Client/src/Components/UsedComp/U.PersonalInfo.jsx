@@ -1,5 +1,4 @@
 import React from 'react';
-import Uploder from '../Uploader';
 import { sortsDatas } from '../Datas';
 import { Button, DatePickerComp, Input, Select } from '../../Components/Form';
 import { BiChevronDown } from 'react-icons/bi';
@@ -13,11 +12,6 @@ function UPersonalInfo({ titles }) {
   const [gender, setGender] = React.useState(sortsDatas.genderFilter[0]);
   return (
     <div className="flex-colo gap-4">
-      {/* uploader */}
-      <div className="flex gap-3 flex-col w-full col-span-6">
-        <p className="text-sm">Profile Image</p>
-        <Uploder />
-      </div>
       {/* select  */}
       {titles && (
         <div className="flex w-full flex-col gap-3">

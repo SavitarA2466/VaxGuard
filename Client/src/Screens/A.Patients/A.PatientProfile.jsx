@@ -1,16 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../../Layout/AdminLayout/A.index';
 import { ApatientTab } from '../../Components/Datas';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { IoArrowBackOutline } from 'react-icons/io5';
 import AMedicalRecord from './A.MedicalRecord';
 import AAppointmentsUsed from '../../Components/UsedComp/A.AppointmentsUsed';
 import APersonalInfo from '../../Components/UsedComp/A.PersonalInfo';
 import APatientImages from './A.PatientImages';
 import AHealthInfomation from './A.HealthInfomation';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 function APatientProfile() {
+  const { id } = useParams();
   const [activeTab, setActiveTab] = React.useState(1);
+  const [child, setChild] = useState(null);
+
+  useEffect(() => {
+    const fetchChild = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/children/${id}`);
+        setChild(response.data);
+      } catch (error) {
+        console.error('Error fetching Child:', error);
+        toast.error('Failed to fetch Child data');
+      }
+    };
+
+    fetchChild();
+  }, [id]);
 
   const tabPanel = () => {
     switch (activeTab) {

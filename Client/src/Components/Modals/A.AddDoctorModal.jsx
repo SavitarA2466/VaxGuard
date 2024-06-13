@@ -1,21 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Modal from './Modal';
-import { sortsDatas } from '../Datas';
-import { Button, Input, Select } from '../Form';
-import { BiChevronDown } from 'react-icons/bi';
+import { Button, Input } from '../Form';
 import { HiOutlineCheckCircle } from 'react-icons/hi';
 import { toast } from 'react-hot-toast';
 import axios from 'axios';
 
 function AAddDoctorModal({ closeModal, isOpen, doctor, datas }) {
-  const [instraction, setInstraction] = useState(sortsDatas.title[0]);
-  const [access, setAccess] = useState({});
   const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    title: "",
-    phoneNumber: "",
-    password: "",
+    fullName: '',
+    email: '',
+    phoneNumber: '',
+    password: '',
+    role: '', // New field for role
   });
 
   const handleInputChange = (e) => {
@@ -25,12 +21,22 @@ function AAddDoctorModal({ closeModal, isOpen, doctor, datas }) {
     });
   };
 
-  const handleOnclick = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Check if all required fields are filled
+    if (!formData.fullName.trim() || !formData.email.trim() || !formData.phoneNumber.trim() || !formData.password.trim() || !formData.role.trim()) {
+      toast.error('Please fill in all the fields');
+      return;
+    }
+
     try {
-      const response = await axios.post('http://localhost:5000/api/doctors', formData);
+      // Send the form data to the backend
+      await axios.post('http://localhost:5000/api/doctors', formData);
       toast.success('Doctor added successfully');
       closeModal();
     } catch (error) {
+      console.error('Error adding doctor:', error.response.data);
       toast.error('Error adding doctor');
     }
   };
@@ -41,9 +47,10 @@ function AAddDoctorModal({ closeModal, isOpen, doctor, datas }) {
       isOpen={isOpen}
       title={doctor ? 'Add Doctor' : datas?.id ? 'Edit Stuff' : 'Add Stuff'}
       width={'max-w-3xl'}
+      onSubmit={handleSubmit}
     >
       <div className="flex-colo gap-6">
-        <div className="grid sm:grid-cols-2 gap-4 w-full">
+        <div className="grid sm:grid-cols-1 gap-4 w-full">
           <Input
             label="Full Name"
             color={true}
@@ -52,19 +59,6 @@ function AAddDoctorModal({ closeModal, isOpen, doctor, datas }) {
             value={formData.fullName}
             onChange={handleInputChange}
           />
-
-          <div className="flex w-full flex-col gap-3">
-            <p className="text-black text-sm">Title</p>
-            <Select
-              selectedPerson={instraction}
-              setSelectedPerson={setInstraction}
-              datas={sortsDatas.title}
-            >
-              <div className="w-full flex-btn text-textGray text-sm p-4 border border-border font-light rounded-lg focus:border focus:border-subMain">
-                {instraction.name} <BiChevronDown className="text-xl" />
-              </div>
-            </Select>
-          </div>
         </div>
 
         <div className="grid sm:grid-cols-2 gap-4 w-full">
@@ -84,7 +78,6 @@ function AAddDoctorModal({ closeModal, isOpen, doctor, datas }) {
           />
         </div>
 
-        {/* password */}
         <Input
           label="Password"
           color={true}
@@ -93,7 +86,21 @@ function AAddDoctorModal({ closeModal, isOpen, doctor, datas }) {
           onChange={handleInputChange}
         />
 
-        {/* buttones */}
+        {/* Dropdown for Role */}
+        <div className="grid sm:grid-cols-2 gap-4 w-full">
+          <label className="block text-sm font-medium text-gray-700">Role</label>
+          <select
+            name="role"
+            value={formData.role}
+            onChange={handleInputChange}
+            className="block w-full px-3 py-2 mt-1 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          >
+            <option value="">Select Role</option>
+            <option value="Doctor">Doctor</option>
+            <option value="User">User</option>
+          </select>
+        </div>
+
         <div className="grid sm:grid-cols-2 gap-4 w-full">
           <button
             onClick={closeModal}
@@ -101,7 +108,7 @@ function AAddDoctorModal({ closeModal, isOpen, doctor, datas }) {
           >
             Cancel
           </button>
-          <Button label="Save" Icon={HiOutlineCheckCircle} onClick={handleOnclick} />
+          <Button label="Save" Icon={HiOutlineCheckCircle} onClick={handleSubmit} />
         </div>
       </div>
     </Modal>

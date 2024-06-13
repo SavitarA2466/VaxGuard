@@ -7,6 +7,8 @@ import { IoArrowBackOutline } from 'react-icons/io5';
 import DPatientsUsed from '../Components/UsedComp/D.PatientsUsed';
 import DAppointmentsUsed from '../Components/UsedComp/D.AppointmentsUsed';
 import { DdoctorTab } from '../Components/Datas'
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 function DDoctorProfile() {
   const [activeTab, setActiveTab] = React.useState(1);

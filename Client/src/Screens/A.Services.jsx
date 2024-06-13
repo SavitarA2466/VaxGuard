@@ -4,7 +4,7 @@ import { toast } from 'react-hot-toast';
 import { BiChevronDown, BiPlus } from 'react-icons/bi';
 import Layout from '../Layout/AdminLayout/A.index';
 import { Button, Select } from '../Components/Form';
-import { AServiceTable } from '../Components/Tables';
+import { AServiceTable } from '../Components/Tables/A.ServiceTable';
 import { servicesData, sortsDatas } from '../Components/Datas';
 import AAddEditServiceModal from '../Components/Modals/A.AddEditServiceModal';
 
@@ -52,20 +52,6 @@ function AServices() {
 
         <div className="grid md:grid-cols-6 grid-cols-1 gap-2">
           <div className="md:col-span-5 grid lg:grid-cols-4 xs:grid-cols-2 items-center gap-2">
-            <input
-              type="text"
-              placeholder='Search'
-              className="h-14 w-full text-sm text-main rounded-md bg-dry border border-border px-4"
-            />
-            <Select
-              selectedPerson={status}
-              setSelectedPerson={setStatus}
-              datas={sortsDatas.service}
-            >
-              <div className="w-full flex-btn text-main text-sm p-4 border bg-dry border-border font-light rounded-lg focus:border focus:border-subMain">
-                {status.name} <BiChevronDown className="text-xl" />
-              </div>
-            </Select>
           </div>
 
           {/* export */}

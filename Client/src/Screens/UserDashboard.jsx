@@ -11,7 +11,8 @@ import {
   medicineData, // Assuming you have medicine data
 } from '../Components/Datas';
 import { Link } from 'react-router-dom';
-import { ServiceTable, VaccineTable } from '../Components/Tables';
+import { ServiceTable} from '../Components/Tables/ServiceTable';
+import { VaccineTable } from '../Components/Tables/VaccineTable'; 
 
 function UserDashboard() {
   const handleEditService = (item) => {

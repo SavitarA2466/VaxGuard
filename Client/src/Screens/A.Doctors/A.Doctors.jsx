@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { MdOutlineCloudDownload } from 'react-icons/md';
 import { toast } from 'react-hot-toast';
 import { BiPlus } from 'react-icons/bi';
 import Layout from '../../Layout/AdminLayout/A.index';
 import { Button } from '../../Components/Form';
-import { ADoctorsTable } from '../../Components/Tables';
+import { ADoctorsTable } from '../../Components/Tables/A.DoctorsTable';
+import { doctorsData } from '../../Components/Datas';
 import { useNavigate } from 'react-router-dom';
 import AAddDoctorModal from '../../Components/Modals/A.AddDoctorModal';
-import axios from 'axios';
 
 function ADoctors() {
   const [isOpen, setIsOpen] = React.useState(false);
   const navigate = useNavigate();
-  const [doctors, setDoctors] = useState([]);
 
   const onCloseModal = () => {
     setIsOpen(false);
@@ -21,19 +20,6 @@ function ADoctors() {
   const preview = (data) => {
     navigate(`/A.doctors/preview/${data.id}`);
   };
-
-  useEffect(() => {
-    const fetchDoctors = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/doctors');
-        setDoctors(response.data);
-      } catch (error) {
-        toast.error('Error fetching doctors');
-      }
-    };
-
-    fetchDoctors();
-  }, []);
 
   return (
     <Layout>
@@ -87,7 +73,7 @@ function ADoctors() {
         <div className="mt-8 w-full overflow-x-scroll">
           <ADoctorsTable
             doctor={true}
-            data={doctors}
+            data={doctorsData}
             functions={{
               preview: preview,
             }}
@@ -99,3 +85,4 @@ function ADoctors() {
 }
 
 export default ADoctors;
+

@@ -37,6 +37,7 @@ import DoctorPatientProfile from './Screens/D.Patients/D.PatientProfile';
 
 import AdminCreatePatient from './Screens/A.Patients/A.CreatePatient';
 import CreateChild from './Screens/Childs/CreateChild';
+import DNewMedicalRecode from './Screens/D.Patients/D.NewMedicalRecode';
 
 import NotFound from './Screens/NotFound';
 import Login from './Login';
@@ -73,8 +74,10 @@ function App() {
           <Route path="/doctorDashboard" element={<DoctorDashboard />} />
           <Route path="/D.Patients" element={<DoctorPatients />} />
           <Route path="/D.Patients/D.PatientProfile" element={<DoctorPatientProfile />} />
+          <Route path="/D.patients/preview/:id" element={<DoctorPatientProfile />} />
           <Route path="/D.appointments" element={<DoctorAppointments />} />
           <Route path="/D.announcement" element={<DoctorAnnouncement />} />
+          <Route path="/D.patients/visiting/:id" element={<DNewMedicalRecode />} />
           <Route path="/D.settings" element={<DoctorSettings />} />
 
           {/* User */}

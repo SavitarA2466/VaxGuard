@@ -4,7 +4,7 @@ import { BiLoaderCircle } from 'react-icons/bi';
 import DatePicker from 'react-datepicker';
 import { FaCheck } from 'react-icons/fa';
 
-export function Input({ label, name, type, color, placeholder }) {
+export function Input({ label, name, type, color, placeholder, value, onChange }) {
   return (
     <div className="text-sm w-full">
       <label
@@ -17,6 +17,8 @@ export function Input({ label, name, type, color, placeholder }) {
       <input
         name={name}
         type={type}
+        value={value}
+        onChange={onChange}
         placeholder={placeholder}
         className={`w-full bg-transparent text-sm mt-3 p-4 border ${
           color ? 'border-border font-light' : 'border-white text-white'
@@ -49,20 +51,20 @@ export function Button({ label, onClick, loading, Icon }) {
 
 // select
 
-export function MenuSelect({ children, datas, item: data }) {
+export function MenuSelect({ children, datas, item }) {
   return (
     <div className="text-sm w-full relative">
       <Menu>
         <Menu.Button>{children}</Menu.Button>
-        <Menu.Items className="flex flex-col z-50 gap-4 absolute left-0  bg-white rounded-md shadow-lg py-4 px-6 ring-1 ring-border focus:outline-none">
-          {datas.map((item, index) => (
+        <Menu.Items className="flex flex-col z-50 gap-4 absolute left-0 bg-white rounded-md shadow-lg py-4 px-6 ring-1 ring-border focus:outline-none">
+          {datas.map((menuItem, index) => (
             <button
-              onClick={() => item.onClick(data)}
+              onClick={() => item && item.id && menuItem.onClick(item.id)} // Check if item is defined and has an id property before accessing it
               key={index}
               className={`flex gap-4 items-center hover:text-subMain`}
             >
-              {item.icon && <item.icon className="text-md text-subMain" />}
-              {item.title}
+              {menuItem.icon && <menuItem.icon className="text-md text-subMain" />}
+              {menuItem.title}
             </button>
           ))}
         </Menu.Items>
@@ -71,23 +73,49 @@ export function MenuSelect({ children, datas, item: data }) {
   );
 }
 
+
+
+
 // select 2
 
-export function Select({ children, selectedPerson, setSelectedPerson, datas }) {
+export function Select({ children, selectedPerson, setSelectedPerson, datas = [] }) {
+  // Ensure datas is an array
+  const options = Array.isArray(datas) ? datas : [];
+
   return (
-    <div className="text-sm relative w-full ">
+    <div className="text-sm relative w-full">
       <div className="w-full">
         <Listbox value={selectedPerson} onChange={setSelectedPerson}>
-          <Listbox.Button className={'w-full'}>{children}</Listbox.Button>
-          <Listbox.Options className="flex  flex-col gap-4 top-10 z-50 absolute left-0 w-full bg-white rounded-md shadow-lg py-4 px-6 ring-1 ring-border focus:outline-none">
-            {datas.map((person) => (
+          <Listbox.Button className="w-full text-left py-2 px-3 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+            {selectedPerson ? selectedPerson.name : 'Select an option'}
+          </Listbox.Button>
+          <Listbox.Options className="flex flex-col gap-2 top-10 z-50 absolute left-0 w-full bg-white rounded-md shadow-lg py-2 px-4 ring-1 ring-black ring-opacity-5 focus:outline-none">
+            {options.map((person) => (
               <Listbox.Option
-                className={`cursor-pointer text-xs hover:text-subMain`}
+                className={({ active }) => 
+                  `cursor-pointer select-none relative py-2 pl-10 pr-4 ${
+                    active ? 'bg-blue-100 text-blue-900' : 'text-gray-900'
+                  }`
+                }
                 key={person.id}
                 value={person}
-                disabled={person.unavailable}
               >
-                {person.name}
+                {({ selected }) => (
+                  <>
+                    <span
+                      className={`block truncate ${
+                        selected ? 'font-medium' : 'font-normal'
+                      }`}
+                    >
+                      {person.name}
+                    </span>
+                    {selected ? (
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">
+                        ✓
+                      </span>
+                    ) : null}
+                  </>
+                )}
               </Listbox.Option>
             ))}
           </Listbox.Options>
@@ -96,6 +124,8 @@ export function Select({ children, selectedPerson, setSelectedPerson, datas }) {
     </div>
   );
 }
+
+
 
 // switch
 
@@ -118,13 +148,15 @@ export function Switchi({ checked, onChange }) {
 
 // textarea
 
-export function Textarea({ label, name, placeholder, rows }) {
+export function Textarea({ label, name, placeholder, rows, value, onChange }) {
   return (
     <div className="text-sm w-full">
       <label className={'text-black text-sm'}>{label}</label>
       <textarea
         name={name}
         rows={rows}
+        value={value}
+        onChange={onChange}
         placeholder={placeholder}
         className={`focus:border-subMain w-full bg-transparent text-sm mt-3 p-4 border border-border rounded font-light 
          `}

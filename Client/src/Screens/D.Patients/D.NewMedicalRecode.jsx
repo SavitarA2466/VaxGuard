@@ -1,44 +1,74 @@
-import React, { useState } from 'react';
-import Layout from '../../Layout';
+import React, { useState, useEffect } from 'react';
+import Layout from '../../Layout/DoctorLayout/D.index';
 import { Link } from 'react-router-dom';
 import { IoArrowBackOutline } from 'react-icons/io5';
 import { Button, Checkbox, Select, Textarea } from '../../Components/Form';
 import { BiChevronDown, BiPlus } from 'react-icons/bi';
 import { medicineData, memberData, servicesData } from '../../Components/Datas';
-import { VaccineDosageTable } from '../../Components/Tables';
+import { VaccineDosageTable } from '../../Components/Tables/VaccineDosageTable';
 import { toast } from 'react-hot-toast';
 import DMedicineDosageModal from '../../Components/Modals/D.MedicineDosage';
-import { FaTimes } from 'react-icons/fa';
-import Uploader from '../../Components/Uploader';
 import { HiOutlineCheckCircle } from 'react-icons/hi';
-
-const doctorsData = memberData.map((item) => {
-  return {
-    id: item.id,
-    name: item.title,
-  };
-});
+import axios from 'axios';
 
 function DNewMedicalRecode() {
-  const [doctors, setDoctors] = useState(DdoctorsData[0]);
+  const [doctors, setDoctors] = useState([]);
+  const [services, setServices] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [treatmeants, setTreatmeants] = useState(
-    servicesData.map((item) => {
-      return {
-        name: item.name,
-        checked: false,
-      };
-    })
-  );
+  const [treatmeants, setTreatmeants] = useState([]);
+  const [doctor, setDoctor] = useState({});
+  const [check, setCheck] = useState(false);
+  const [description, setDescription] = useState('');
+  const [medicalRecords, setMedicalRecords] = useState([]);
 
-  // on change treatmeants
+  // Fetch doctors and services from backend when component mounts
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/doctors'); 
+        setDoctors(response.data);
+      } catch (error) {
+        console.error('Error fetching doctors:', error);
+      }
+    };
+
+    const fetchServices = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/services'); 
+        setServices(response.data);
+
+        // Set up initial state for treatmeants only if services is not empty
+        if (response.data.length > 0) {
+          setTreatmeants(response.data.map(item => ({ name: item.name, checked: false })));
+        }
+      } catch (error) {
+        console.error('Error fetching services:', error);
+      }
+    };
+
+    fetchDoctors();
+    fetchServices();
+  }, []);
+
+
+
+  console.log(doctors);
+  console.log(treatmeants)
+  const doctorsData = doctors.map((item) => {
+    return {
+      id: item._id,
+      name: item.fullName,
+    };
+  });
+
+  // on change treatmean
   const onChangeTreatmeants = (e) => {
-    const { name, checked } = e.target;
+  const { name } = e.target;
     const newTreatmeants = treatmeants.map((item) => {
       if (item.name === name) {
         return {
           ...item,
-          checked: checked,
+          checked: !item.checked,
         };
       }
       return item;
@@ -46,10 +76,30 @@ function DNewMedicalRecode() {
     setTreatmeants(newTreatmeants);
   };
 
+  const handleSubmit = async () => {
+    try {
+      const selectedServices = treatmeants
+        .filter((item) => item.checked)
+        .map((item) => item.name);
+      
+      const newMedicalRecord = {
+        doctor: doctor.id,
+        services: selectedServices,
+        description,
+      };
+console.log(newMedicalRecord);
+      const response = await axios.post('http://localhost:5000/api/medicalRecords', newMedicalRecord);
+      toast.success('Medical record saved successfully');
+    } catch (error) {
+      console.error('Error saving medical record:', error);
+      toast.error('Error saving medical record');
+    }
+  };
+
+
   return (
     <Layout>
       {
-        // modal
         isOpen && (
           <DMedicineDosageModal
             isOpen={isOpen}
@@ -76,11 +126,6 @@ function DNewMedicalRecode() {
           data-aos-offset="200"
           className="col-span-12 flex-colo gap-6 lg:col-span-4 bg-white rounded-xl border-[1px] border-border p-6 lg:sticky top-28"
         >
-          <img
-            src="/images/user7.png"
-            alt="setting"
-            className="w-40 h-40 rounded-full object-cover border border-dashed border-subMain"
-          />
           <div className="gap-2 flex-colo">
             <h2 className="text-sm font-semibold">Amani Mmassy</h2>
             <p className="text-xs text-textGray">amanimmassy@gmail.com</p>
@@ -100,15 +145,15 @@ function DNewMedicalRecode() {
         >
           <div className="flex w-full flex-col gap-5">
             {/* doctor */}
-            <div className="flex w-full flex-col gap-3">
+            <div className="flex w-full flex-col gap-2">
               <p className="text-black text-sm">Doctor</p>
               <Select
-                selectedPerson={doctors}
-                setSelectedPerson={setDoctors}
+                selectedPerson={doctor}
+                setSelectedPerson={setDoctor}
                 datas={doctorsData}
               >
                 <div className="w-full flex-btn text-textGray text-sm p-4 border border-border font-light rounded-lg focus:border focus:border-subMain">
-                  {doctors.name} <BiChevronDown className="text-xl" />
+                  {doctorsData.fullName} <BiChevronDown className="text-xl" />
                 </div>
               </Select>
             </div>
@@ -116,7 +161,7 @@ function DNewMedicalRecode() {
             <div className="flex w-full flex-col gap-4">
               <p className="text-black text-sm">Service</p>
               <div className="grid xs:grid-cols-2 md:grid-cols-3 gap-6 pb-6">
-                {servicesData?.slice(1, 100).map((item) => (
+                {treatmeants?.slice(0, 100).map((item) => (
                   <Checkbox
                     label={item.name}
                     checked={
@@ -129,12 +174,24 @@ function DNewMedicalRecode() {
                 ))}
               </div>
             </div>
+
+            <div className="flex-colo gap-6">
+              <Textarea
+                label="Description"
+                placeholder="Write description here..."
+                color={true}
+                rows={5}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </div>
+
             {/* medicine */}
             <div className="flex w-full flex-col gap-4 mb-6">
               <p className="text-black text-sm">Vaccine</p>
               <div className="w-full overflow-x-scroll">
                 <VaccineDosageTable
-                  data={DmedicineData?.slice(0, 3)}
+                  data={medicineData?.slice(0, 3)}
                   functions={{
                     delete: (id) => {
                       toast.error('This feature is not available yet');
@@ -152,37 +209,11 @@ function DNewMedicalRecode() {
                 <BiPlus /> Add Vaccine
               </button>
             </div>
-            {/* attachment */}
-            <div className="flex w-full flex-col gap-4">
-              <p className="text-black text-sm">Attachments</p>
-              <div className="grid xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 w-full">
-                {[1, 2, 3, 4].map((_, i) => (
-                  <div className="relative w-full">
-                    <img
-                      src={`https://placehold.it/300x300?text=${i}`}
-                      alt="patient"
-                      className="w-full  md:h-40 rounded-lg object-cover"
-                    />
-                    <button
-                      onClick={() =>
-                        toast.error('This feature is not available yet.')
-                      }
-                      className="bg-white rounded-full w-8 h-8 flex-colo absolute -top-1 -right-1"
-                    >
-                      <FaTimes className="text-red-500" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <Uploader setImage={{}} />
-            </div>
             {/* submit */}
             <Button
               label={'Save'}
               Icon={HiOutlineCheckCircle}
-              onClick={() => {
-                toast.error('This feature is not available yet');
-              }}
+              onClick={handleSubmit}
             />
           </div>
         </div>

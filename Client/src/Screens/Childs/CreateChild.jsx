@@ -2,7 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { IoArrowBackOutline } from 'react-icons/io5';
 import Layout from '../../Layout/UserLayout/U.index';
-import UPersonalInfo from '../../Components/UsedComp/U.PersonalInfo';
+import UAddChildModal from '../../Components/Modals/U.AddChildModal';
+
 
 function CreateChild() {
   return (
@@ -14,7 +15,7 @@ function CreateChild() {
         >
           <IoArrowBackOutline />
         </Link>
-        <h1 className="text-xl font-semibold">Create Patient</h1>
+        <h1 className="text-xl font-semibold">Create Child</h1>
       </div>
       <div
         data-aos="fade-up"
@@ -23,7 +24,7 @@ function CreateChild() {
         data-aos-offset="200"
         className="bg-white my-8 rounded-xl border-[1px] border-border p-6"
       >
-        <UPersonalInfo titles={false} />
+        <UAddChildModal titles={false} />
       </div>
     </Layout>
   );

@@ -1,17 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../../Layout/UserLayout/U.index';
 import { UpatientTab } from '../../Components/Datas';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { IoArrowBackOutline } from 'react-icons/io5';
 import ChildMedicalRecord from './ChildMedicalRecord';
 import UAppointmentsUsed from '../../Components/UsedComp/U.AppointmentsUsed';
 import UPersonalInfo from '../../Components/UsedComp/U.PersonalInfo';
 import ChildImages from './ChildImages';
 import ChildHealthInfomation from './ChildHealthInfomation';
-
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 function ChildProfile() {
-  const [activeTab, setActiveTab] = React.useState(1);
+  const [activeTab, setActiveTab] = useState(1);
+  const { id } = useParams();
+  const [child, setChild] = useState(null);
+
+  useEffect(() => {
+    const fetchChild = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/children/${id}`);
+        setChild(response.data);
+      } catch (error) {
+        console.error('Error fetching child:', error);
+        toast.error('Failed to fetch child data');
+      }
+    };
+
+    fetchChild();
+  }, [id]);
 
   const tabPanel = () => {
     switch (activeTab) {
@@ -21,14 +38,14 @@ function ChildProfile() {
         return <UAppointmentsUsed doctor={false} />;
       case 3:
         return <ChildImages />;
-      case 4:
-        return <UPersonalInfo titles={false} />;
-      case 5:
-        return <ChildHealthInfomation />;
       default:
         return;
     }
   };
+
+  if (!child) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Layout>
@@ -39,9 +56,9 @@ function ChildProfile() {
         >
           <IoArrowBackOutline />
         </Link>
-        <h1 className="text-xl font-semibold">Amani Mmassy</h1>
+        <h1 className="text-xl font-semibold">{child.fullName}</h1>
       </div>
-      <div className=" grid grid-cols-12 gap-6 my-8 items-start">
+      <div className="grid grid-cols-12 gap-6 my-8 items-start">
         <div
           data-aos="fade-right"
           data-aos-duration="1000"
@@ -55,9 +72,7 @@ function ChildProfile() {
             className="w-40 h-40 rounded-full object-cover border border-dashed border-subMain"
           />
           <div className="gap-2 flex-colo">
-            <h2 className="text-sm font-semibold">Amani Mmassy</h2>
-            <p className="text-xs text-textGray">amanimmassy@gmail.com</p>
-            <p className="text-xs">+254 712 345 678</p>
+            <h2 className="text-sm font-semibold">{child.fullName}</h2>
           </div>
           {/* tabs */}
           <div className="flex-colo gap-3 px-2 xl:px-12 w-full">

@@ -1,69 +1,105 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 import Modal from './Modal';
-import { Button, Input, Select, Textarea } from '../Form';
-import { BiChevronDown } from 'react-icons/bi';
-import { sortsDatas } from '../Datas';
+import { Button, Input, Textarea } from '../Form';
 import { HiOutlineCheckCircle } from 'react-icons/hi';
 import { toast } from 'react-hot-toast';
 
-function AAddEditVaccineModal({ closeModal, isOpen, datas }) {
-  const [medicine, setMedicine] = useState(sortsDatas.medicine[0]);
+function AAddEditVaccineModal({ closeModal, isOpen, datas,  isEdit,itemId }) {
+  const [vaccine, setVaccine] = useState({
+    vaccineName: '',
+    batchNumber: '',
+    instock: '',
+    description: '',
+  });
 
-  useEffect(() => {
-    if (datas?.name) {
-      setMedicine({
-        id: datas.medicine,
-        name: datas.medicine,
-      });
+  const handleInputChange = (e) => {
+    setVaccine({ ...vaccine, 
+      [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+
+    e.preventDefault();
+
+    console.log('vaccine:', vaccine);
+
+    // Check if all required fields are filled
+    if (!vaccine.vaccineName.trim() || !vaccine.batchNumber.trim() || !vaccine.instock.trim() || !vaccine.description.trim()) {
+      toast.error('Please fill in all the fields');
+      return;
     }
-  }, [datas]);
+    if(isEdit){
+      try {
+        console.log(itemId)
+        await axios.put(`http://localhost:5000/api/vaccines/${itemId}`, vaccine);
+        toast.success('Vaccine updated successfully');
+        closeModal();
+      } catch (error) {
+        console.error('Error updating Vaccine:', error.response.data);
+        toast.error('Error updating vaccine');
+      }
+    } 
+    if(!isEdit){
+    try {
+      await axios.post('http://localhost:5000/api/vaccines', vaccine);
+      toast.success('Vaccine saved successfully');
+      closeModal();
+    } catch (error) {
+      console.error('Error saving Vaccine:', error.response.data);
+      toast.error('Error saving vaccine');
+    }
+  }
+  };
 
   return (
     <Modal
       closeModal={closeModal}
       isOpen={isOpen}
-      title={datas?.name ? 'Edit Medicine' : 'New Medicine'}
+      title={datas?.name ? 'Edit Vaccine' : 'New Vaccine'}
       width={'max-w-3xl'}
+      onSubmit={handleSubmit}
     >
       <div className="flex-colo gap-6">
-        <div className="grid sm:grid-cols-2 gap-4 w-full">
+        <div className="grid sm:grid-cols-1 gap-4 w-full">
           <div className="flex w-full flex-col gap-3">
-            <p className="text-black text-sm">Medicine Name</p>
-            <Select
-              selectedPerson={medicine}
-              setSelectedPerson={setMedicine}
-              datas={sortsDatas.medicine}
-            >
-              <div className="w-full flex-btn text-textGray text-sm p-4 border border-border font-light rounded-lg focus:border focus:border-subMain">
-                {medicine?.name} <BiChevronDown className="text-xl" />
-              </div>
-            </Select>
+            <Input
+              label="Vaccine Name"
+              name="vaccineName"
+              value={vaccine.vaccineName}
+              onChange={handleInputChange}
+              type="text"
+              color={true}
+            />
           </div>
         </div>
-
         <div className="grid sm:grid-cols-2 gap-4 w-full">
-        <Input
+          <Input
             label="Batch Number"
+            name="batchNumber"
+            value={vaccine.batchNumber}
+            onChange={handleInputChange}
             type="text"
             color={true}
-            placeholder={datas?.stock ? datas.stock : 0}
           />
           <Input
             label="Instock"
+            name="instock"
+            value={vaccine.instock}
+            onChange={handleInputChange}
             type="number"
             color={true}
-            placeholder={datas?.stock ? datas.stock : 0}
           />
         </div>
-
-        {/* des */}
         <Textarea
           label="Description"
+          name="description"
+          value={vaccine.description}
+          onChange={handleInputChange}
           placeholder="Write description here..."
           color={true}
           rows={5}
         />
-        {/* buttones */}
         <div className="grid sm:grid-cols-2 gap-4 w-full">
           <button
             onClick={closeModal}
@@ -74,9 +110,7 @@ function AAddEditVaccineModal({ closeModal, isOpen, datas }) {
           <Button
             label="Save"
             Icon={HiOutlineCheckCircle}
-            onClick={() => {
-              toast.error('This feature is not available yet');
-            }}
+            onClick={handleSubmit}
           />
         </div>
       </div>

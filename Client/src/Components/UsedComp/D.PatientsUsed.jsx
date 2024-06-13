@@ -1,5 +1,5 @@
 import React from 'react';
-import { DPatientTable } from '../Tables';
+import { DPatientTable } from '../Tables/D.PatientTable';
 import { useNavigate } from 'react-router-dom';
 import { memberData } from '../Datas';
 

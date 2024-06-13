@@ -1,315 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { MenuSelect } from './Form';
 import { BiDotsHorizontalRounded } from 'react-icons/bi';
 import { FiEdit, FiEye } from 'react-icons/fi';
 import { RiDeleteBin6Line, RiDeleteBinLine } from 'react-icons/ri';
 import { toast } from 'react-hot-toast';
+import axios from 'axios';
+import { useState } from 'react';
+import UAddChildModal from './Modals/U.AddChildModal';
+import { Link } from 'react-router-dom';
 
 const thclass = 'text-start text-sm font-medium py-3 px-2 whitespace-nowrap';
 const tdclass = 'text-start text-sm py-4 px-2 whitespace-nowrap';
-
-// Admin Vaccine Table
-export function AVaccineTable({ data, onEdit }) {
-    const DropDown1 = [
-      {
-        title: 'Edit',
-        icon: FiEdit,
-        onClick: (item) => {
-          onEdit(item);
-        },
-      },
-      {
-        title: 'Delete',
-        icon: RiDeleteBin6Line,
-        onClick: () => {
-          toast.error('This feature is not available yet');
-        },
-      },
-    ];
-    return (
-      <table className="table-auto w-full">
-        <thead className="bg-dry rounded-md overflow-hidden">
-          <tr>
-            <th className={thclass}>Name</th>
-            <th className={thclass}>Status</th>
-            <th className={thclass}>InStock</th>
-            <th className={thclass}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item, index) => (
-            <tr
-              key={item.id}
-              className="border-b border-border hover:bg-greyed transitions"
-            >
-              <td className={tdclass}>
-                <h4 className="text-sm font-medium">{item?.name}</h4>
-              </td>
-              <td className={tdclass}>
-                <span
-                  className={`text-xs font-medium ${
-                    item?.status === 'Out of stock'
-                      ? 'text-red-600'
-                      : 'text-green-600'
-                  }`}
-                >
-                  {item?.status}
-                </span>
-              </td>
-              <td className={tdclass}>{item?.stock}</td>
-              <td className={tdclass}>
-                <MenuSelect datas={DropDown1} item={item}>
-                  <div className="bg-dry border text-main text-xl py-2 px-4 rounded-lg">
-                    <BiDotsHorizontalRounded />
-                  </div>
-                </MenuSelect>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  }
-
-//Admin Service table
-export function AServiceTable({ data, onEdit }) {
-    const DropDown1 = [
-      {
-        title: 'Edit',
-        icon: FiEdit,
-        onClick: (item) => {
-          onEdit(item);
-        },
-      },
-      {
-        title: 'Delete',
-        icon: RiDeleteBin6Line,
-        onClick: () => {
-          toast.error('This feature is not available yet');
-        },
-      },
-    ];
-  
-    return (
-      <table className="table-auto w-full">
-        <thead className="bg-dry rounded-md overflow-hidden">
-          <tr>
-            <th className={thclass}>Name</th>
-            <th className={thclass}>Created At</th>
-            <th className={thclass}>Status</th>
-            <th className={thclass}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item) => (
-            <tr
-              key={item.id}
-              className="border-b border-border hover:bg-greyed transition"
-            >
-              <td className={tdclass}>
-                <h4 className="text-sm font-medium">{item?.name}</h4>
-              </td>
-              <td className={tdclass}>{item?.date}</td>
-              <td className={tdclass}>
-                <span
-                  className={`text-xs font-medium ${
-                    !item?.status ? 'text-red-600' : 'text-green-600'
-                  }`}
-                >
-                  {!item?.status ? 'Disabled' : 'Enabled'}
-                </span>
-              </td>
-              <td className={tdclass}>
-                <MenuSelect datas={DropDown1} item={item}>
-                  <div className="bg-dry border text-main text-xl py-2 px-4 rounded-lg">
-                    <BiDotsHorizontalRounded />
-                  </div>
-                </MenuSelect>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  }
-
-//Admin Patient Table
-export function APatientTable({ data, functions, used }) {
-    const DropDown1 = !used
-      ? [
-          {
-            title: 'View',
-            icon: FiEye,
-            onClick: (data) => {
-              functions.preview(data.id);
-            },
-          },
-          {
-            title: 'Delete',
-            icon: RiDeleteBin6Line,
-            onClick: () => {
-              toast.error('This feature is not available yet');
-            },
-          },
-        ]
-      : [
-          {
-            title: 'View',
-            icon: FiEye,
-            onClick: (data) => {
-              functions.preview(data.id);
-            },
-          },
-        ];
-    const thclasse = 'text-start text-sm font-medium py-3 px-2 whitespace-nowrap';
-    const tdclasse = 'text-start text-xs py-4 px-2 whitespace-nowrap';
-    return (
-      <table className="table-auto w-full">
-        <thead className="bg-dry rounded-md overflow-hidden">
-          <tr>
-            <th className={thclasse}>#</th>
-            <th className={thclasse}>Patient</th>
-            <th className={thclasse}>Created At</th>
-            <th className={thclasse}>Gender</th>
-            {!used && (
-              <>
-                <th className={thclasse}>Blood Group</th>
-                <th className={thclasse}>Age</th>
-              </>
-            )}
-  
-            <th className={thclasse}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item, index) => (
-            <tr
-              key={item.id}
-              className="border-b border-border hover:bg-greyed transitions"
-            >
-              <td className={tdclasse}>{index + 1}</td>
-              <td className={tdclasse}>
-                <div className="flex gap-4 items-center">
-                  {!used && (
-                    <span className="w-12">
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="w-full h-12 rounded-full object-cover border border-border"
-                      />
-                    </span>
-                  )}
-  
-                  <div>
-                    <h4 className="text-sm font-medium">{item.title}</h4>
-                    <p className="text-xs mt-1 text-textGray">{item.phone}</p>
-                  </div>
-                </div>
-              </td>
-              <td className={tdclasse}>{item.date}</td>
-  
-              <td className={tdclasse}>
-                <span
-                  className={`py-1 px-4 ${
-                    item.gender === 'Male'
-                      ? 'bg-subMain text-subMain'
-                      : 'bg-orange-500 text-orange-500'
-                  } bg-opacity-10 text-xs rounded-xl`}
-                >
-                  {item.gender}
-                </span>
-              </td>
-              {!used && (
-                <>
-                  <td className={tdclasse}>{item.blood}</td>
-                  <td className={tdclasse}>{item.age}</td>
-                </>
-              )}
-  
-              <td className={tdclasse}>
-                <MenuSelect datas={DropDown1} item={item}>
-                  <div className="bg-dry border text-main text-xl py-2 px-4 rounded-lg">
-                    <BiDotsHorizontalRounded />
-                  </div>
-                </MenuSelect>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  }
-
-//Admin Doctor table
-export function ADoctorsTable({ data, functions, doctor }) {
-    const DropDown1 = [
-      {
-        title: 'View',
-        icon: FiEye,
-        onClick: (data) => {
-          functions.preview(data);
-        },
-      },
-      {
-        title: 'Delete',
-        icon: RiDeleteBin6Line,
-        onClick: () => {
-          toast.error('This feature is not available yet');
-        },
-      },
-    ];
-    return (
-      <table className="table-auto w-full">
-        <thead className="bg-dry rounded-md overflow-hidden">
-          <tr>
-            <th className={thclass}>#</th>
-            <th className={thclass}>{doctor ? 'Doctor' : 'Receptionist'}</th>
-            <th className={thclass}>Created At</th>
-            <th className={thclass}>Phone</th>
-            <th className={thclass}>Title</th>
-            <th className={thclass}>Email</th>
-            <th className={thclass}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {/* {data.map((item, index) => (
-            <tr
-              key={item.id}
-              className="border-b border-border hover:bg-greyed transitions"
-            >
-              <td className={tdclass}>{index + 1}</td>
-              <td className={tdclass}>
-                <div className="flex gap-4 items-center">
-                  <span className="w-12">
-                    <img
-                      src={item.user.image}
-                      alt={item.user.title}
-                      className="w-full h-12 rounded-full object-cover border border-border"
-                    />
-                  </span>
-                  <h4 className="text-sm font-medium">{item.user.title}</h4>
-                </div>
-              </td>
-              <td className={tdclass}>12 May, 2021</td>
-              <td className={tdclass}>
-                <p className="text-textGray">{item.user.phone}</p>
-              </td>
-              <td className={tdclass}>{item.title}</td>
-              <td className={tdclass}>{item.user.email}</td>
-  
-              <td className={tdclass}>
-                <MenuSelect datas={DropDown1} item={item}>
-                  <div className="bg-dry border text-main text-xl py-2 px-4 rounded-lg">
-                    <BiDotsHorizontalRounded />
-                  </div>
-                </MenuSelect>
-              </td>
-            </tr>
-          ))} */}
-        </tbody>
-      </table>
-    );
-  }
 
 //Admin Appointment table
 export function AAppointmentTable({ data, functions, doctor }) {
@@ -407,44 +108,6 @@ export function AVaccineDosageTable({ data, functions, button }) {
                   </button>
                 </td>
               )}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  }
-
-// Vaccine Table
-export function VaccineTable({ data, onEdit }) {
-  
-    return (
-      <table className="table-auto w-full">
-        <thead className="bg-dry rounded-md overflow-hidden">
-          <tr>
-            <th className={thclass}>Name</th>
-            <th className={thclass}>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item) => (
-            <tr
-              key={item.id}
-              className="border-b border-border hover:bg-greyed transitions"
-            >
-              <td className={tdclass}>
-                <h4 className="text-sm font-medium">{item?.name}</h4>
-              </td>
-              <td className={tdclass}>
-                <span
-                  className={`text-xs font-medium ${
-                    item?.status === 'Out of stock'
-                      ? 'text-red-600'
-                      : 'text-green-600'
-                  }`}
-                >
-                  {item?.status}
-                </span>
-              </td>
             </tr>
           ))}
         </tbody>
@@ -574,155 +237,7 @@ export function DPatientTable({ data, functions, used }) {
     );
   }
 
-//User Patient Table
-export function UPatientTable({ data, functions, used }) {
-    const DropDown1 = !used
-      ? [
-          {
-            title: 'View',
-            icon: FiEye,
-            onClick: (data) => {
-              functions.preview(data.id);
-            },
-          },
-          {
-            title: 'Delete',
-            icon: RiDeleteBin6Line,
-            onClick: () => {
-              toast.error('This feature is not available yet');
-            },
-          },
-        ]
-      : [
-          {
-            title: 'View',
-            icon: FiEye,
-            onClick: (data) => {
-              functions.preview(data.id);
-            },
-          },
-        ];
-    const thclasse = 'text-start text-sm font-medium py-3 px-2 whitespace-nowrap';
-    const tdclasse = 'text-start text-xs py-4 px-2 whitespace-nowrap';
-    return (
-      <table className="table-auto w-full">
-        <thead className="bg-dry rounded-md overflow-hidden">
-          <tr>
-            <th className={thclasse}>#</th>
-            <th className={thclasse}>Child</th>
-            <th className={thclasse}>Gender</th>
-            {!used && (
-              <>
-                <th className={thclasse}>Blood Group</th>
-                <th className={thclasse}>Age</th>
-              </>
-            )}
-            <th className={thclasse}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item, index) => (
-            <tr
-              key={item.id}
-              className="border-b border-border hover:bg-greyed transitions"
-            >
-              <td className={tdclasse}>{index + 1}</td>
-              <td className={tdclasse}>
-                <div className="flex gap-4 items-center">
-                  {!used && (
-                    <span className="w-12">
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="w-full h-12 rounded-full object-cover border border-border"
-                      />
-                    </span>
-                  )}
-  
-                  <div>
-                    <h4 className="text-sm font-medium">{item.title}</h4>
-                    <p className="text-xs mt-1 text-textGray">{item.phone}</p>
-                  </div>
-                </div>
-              </td>
-              <td className={tdclasse}>
-                <span
-                  className={`py-1 px-4 ${
-                    item.gender === 'Male'
-                      ? 'bg-subMain text-subMain'
-                      : 'bg-orange-500 text-orange-500'
-                  } bg-opacity-10 text-xs rounded-xl`}
-                >
-                  {item.gender}
-                </span>
-              </td>
-              {!used && (
-                <>
-                  <td className={tdclasse}>{item.blood}</td>
-                  <td className={tdclasse}>{item.age}</td>
-                </>
-              )}
-              <td className={tdclasse}>
-                <MenuSelect datas={DropDown1} item={item}>
-                  <div className="bg-dry border text-main text-xl py-2 px-4 rounded-lg">
-                    <BiDotsHorizontalRounded />
-                  </div>
-                </MenuSelect>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  }
 
-//User Doctor table
-export function UDoctorsTable({ data, functions, doctor }) {
-
-    const thclass = 'text-start text-sm font-medium py-3 px-2 whitespace-nowrap';
-    const tdclass = 'text-start text-xs py-4 px-2 whitespace-nowrap';
-  
-    return (
-      <table className="table-auto w-full">
-        <thead className="bg-dry rounded-md overflow-hidden">
-          <tr>
-            <th className={thclass}>#</th>
-            <th className={thclass}>{doctor ? 'Doctor' : 'Receptionist'}</th>
-            <th className={thclass}>Phone</th>
-            <th className={thclass}>Title</th>
-            <th className={thclass}>Email</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item, index) => (
-            <tr
-              key={item.id}
-              className="border-b border-border hover:bg-greyed transitions"
-            >
-              <td className={tdclass}>{index + 1}</td>
-              <td className={tdclass}>
-                <div className="flex gap-4 items-center">
-                  <span className="w-12">
-                    <img
-                      src={item.user.image}
-                      alt={item.user.title}
-                      className="w-full h-12 rounded-full object-cover border border-border"
-                    />
-                  </span>
-                  <h4 className="text-sm font-medium">{item.user.title}</h4>
-                </div>
-              </td>
-              <td className={tdclass}>
-                <p className="text-textGray">{item.user.phone}</p>
-              </td>
-              <td className={tdclass}>{item.title}</td>
-              <td className={tdclass}>{item.user.email}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    );
-  }
 
 // Appointment table
 export function AppointmentTable({ data, functions, doctor }) {
@@ -796,8 +311,7 @@ export function VaccineDosageTable({ data, functions, button }) {
         <thead className="bg-dry rounded-md overflow-hidden">
           <tr>
             <th className={thclasse}>Item</th>
-            <th className={thclasse}>Dosage</th>
-            <th className={thclasse}>Batch Number</th> {/* Added Batch Number column */}
+            <th className={thclasse}>Batch Number</th> 
             {button && <th className={thclasse}>Actions</th>}
           </tr>
         </thead>
@@ -826,3 +340,104 @@ export function VaccineDosageTable({ data, functions, button }) {
       </table>
     );
   }
+
+  export function APatientTable() {
+    const [data, setData] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedChild, setSelectedChild] = useState(null);
+    const [editChildId, setEditChildId] = useState(null);
+  
+    const calculateAge = (dob) => {
+      const today = new Date();
+      const birthDate = new Date(dob);
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      return age;
+    };
+  
+    useEffect(() => {
+      async function fetchData() {
+        try {
+          const response = await axios.get('http://localhost:5000/api/children');
+          const childrenData = response.data.map((child) => ({
+            ...child,
+            age: calculateAge(child.dateOfBirth)
+          }));
+          setData(childrenData);
+        } catch (error) {
+          console.error('Error fetching children:', error);
+          toast.error('Error fetching children');
+        }
+      }
+  
+      fetchData();
+    }, []);
+  
+    console.log(data) 
+    const handleEdit = (item) => {
+      setSelectedChild(item);
+      setEditChildId(item._id);
+      setIsModalOpen(true);
+    };
+  
+    const handleDelete = async (itemId) => {
+      try {
+        await axios.delete(`http://localhost:5000/api/children/${itemId}`);
+        setData(data.filter((item) => item._id !== itemId));
+        toast.success('Child deleted successfully');
+      } catch (error) {
+        console.error('Error deleting child:', error);
+        toast.error('Error deleting child');
+      }
+    };
+  
+    return (
+      <div>
+        <table className="table-auto w-full">
+          <thead className="bg-dry rounded-md overflow-hidden">
+            <tr>
+              <th className={thclass}>#</th>
+              <th className={thclass}>Child</th>
+              <th className={thclass}>Gender</th>
+              <th className={thclass}>Blood Group</th>
+              <th className={thclass}>Age</th>
+              <th className={thclass}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((item, index) => (
+              <tr key={item._id} className="border-b border-border hover:bg-greyed transitions">
+                <td className={tdclass}>{index + 1}</td>
+                <td className={tdclass}>{item.fullName}</td>
+                <td className={tdclass}>
+                  <span className={`py-1 px-4 ${item.gender === 'Male' ? 'bg-subMain text-subMain' : 'bg-orange-500 text-orange-500'} bg-opacity-10 text-xs rounded-xl`}>
+                    {item.gender}
+                  </span>
+                </td>
+                <td className={tdclass}>{item.bloodType}</td>
+                <td className={tdclass}>{item.age}</td>
+                <td className={tdclass}>
+                  <Link to={`/child/profile/${item._id}`} className="text-blue-500 mr-2">
+                    <FiEye className="inline ml-1" />
+                  </Link>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {isModalOpen && (
+          <UAddChildModal
+            closeModal={() => setIsModalOpen(false)}
+            isOpen={isModalOpen}
+            datas={selectedChild}
+            isEdit={true}
+            itemId={editChildId}
+          />
+        )}
+      </div>
+    );
+  }
+  

@@ -15,7 +15,7 @@ import {
   memberData,
   medicineData,
 } from '../Components/Datas';
-import { VaccineTable } from '../Components/Tables';
+import { VaccineTable } from '../Components/Tables/VaccineTable';
 import { Link } from 'react-router-dom';
 
 function AdminDashboard() {
@@ -109,17 +109,11 @@ function AdminDashboard() {
                 className="flex-btn gap-4 mt-6 border-b pb-4 border-border"
               >
                 <div className="flex gap-4 items-center">
-                  <img
-                    src={member.image}
-                    alt="member"
-                    className="w-10 h-10 rounded-md object-cover"
-                  />
                   <div className="flex flex-col gap-1">
                     <h3 className="text-xs font-medium">{member.title}</h3>
                     <p className="text-xs text-gray-400">{member.phone}</p>
                   </div>
                 </div>
-                <p className="text-xs text-textGray">2:00 PM</p>
               </Link>
             ))}
           </div>          

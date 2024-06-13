@@ -32,8 +32,6 @@ function AAddAppointmentModal({ closeModal, isOpen, datas }) {
   const [doctors, setDoctors] = useState(doctorsData[0]);
   const [shares, setShares] = useState({
     email: false,
-    sms: false,
-    whatsapp: false,
   });
   const [open, setOpen] = useState(false);
 
@@ -170,18 +168,6 @@ function AAddAppointmentModal({ closeModal, isOpen, datas }) {
               checked={shares.email}
               onChange={onChangeShare}
               label="Email"
-            />
-            <Checkbox
-              name="sms"
-              checked={shares.sms}
-              onChange={onChangeShare}
-              label="SMS"
-            />
-            <Checkbox
-              name="whatsapp"
-              checked={shares.whatsapp}
-              onChange={onChangeShare}
-              label="WhatsApp"
             />
           </div>
         </div>

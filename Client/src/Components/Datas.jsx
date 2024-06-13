@@ -428,7 +428,7 @@ export const AMenuDatas = [
   export const announcementData = [
     {
       id: 1,
-      title: 'Offer on Dental Checkup',
+      title: 'Dear Patients',
       date: '3 days ago',
       type: 'email',
       sendTo: 'All Patients',
@@ -726,21 +726,16 @@ export const AMenuDatas = [
   export const AdoctorTab = [
     {
       id: 1,
-      title: 'Personal Information',
-      icon: RiUserLine,
-    },
-    {
-      id: 2,
       title: 'Patients',
       icon: BiUserPlus,
     },
     {
-      id: 3,
+      id: 2,
       title: 'Appointments',
       icon: BiCalendar,
     },
     {
-      id: 6,
+      id: 3,
       title: 'Change Password',
       icon: RiLockPasswordLine,
     },
@@ -756,11 +751,6 @@ export const AMenuDatas = [
       id: 2,
       title: 'Appointments',
       icon: BiCalendar,
-    },
-    {
-      id: 5,
-      title: 'Images',
-      icon: RiImageLine,
     },
   ];
   
@@ -802,16 +792,6 @@ export const AMenuDatas = [
       id: 3,
       title: 'Images',
       icon: RiImageLine,
-    },
-    {
-      id: 4,
-      title: 'Patient Information',
-      icon: RiUserLine,
-    },
-    {
-      id: 5,
-      title: 'Health Information',
-      icon: RiHeartLine,
     },
   ];
   
@@ -927,12 +907,6 @@ export const AMenuDatas = [
           title: 'Description',
           value: '..',
         },
-      ],
-      attachments: [
-        'https://placehold.it/300x300',
-        'https://placehold.it/300x300',
-        'https://placehold.it/300x300',
-        'https://placehold.it/300x300',
       ],
     },
   ];

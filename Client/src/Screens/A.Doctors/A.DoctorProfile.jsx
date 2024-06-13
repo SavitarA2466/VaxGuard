@@ -1,34 +1,50 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../../Layout/AdminLayout/A.index';
-import APersonalInfo from '../../Components/UsedComp/A.PersonalInfo';
 import ChangePassword from '../../Components/UsedComp/ChangePassword';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { IoArrowBackOutline } from 'react-icons/io5';
 import APatientsUsed from '../../Components/UsedComp/A.PatientsUsed';
 import AAppointmentsUsed from '../../Components/UsedComp/A.AppointmentsUsed';
 import { AdoctorTab } from '../../Components/Datas';
-import Access from '../../Components/Access';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
-function ADoctorProfile() {
-  const [activeTab, setActiveTab] = React.useState(1);
-  const [access, setAccess] = React.useState({});
+function ADoctorProfile(props) {
+  const { id } = useParams(); // Get the doctor ID from the URL
+  const [activeTab, setActiveTab] = useState(1);
+  const [doctor, setDoctor] = useState(null);
+
+  useEffect(() => {
+    // Fetch the doctor data by ID when the component mounts
+    const fetchDoctor = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/doctors/${id}`);
+        setDoctor(response.data);
+      } catch (error) {
+        console.error('Error fetching doctor:', error);
+        toast.error('Failed to fetch doctor data');
+      }
+    };
+
+    fetchDoctor();
+  }, [id]);
 
   const tabPanel = () => {
     switch (activeTab) {
       case 1:
-        return <APersonalInfo titles={true} />;
-      case 2:
         return <APatientsUsed />;
-      case 3:
+      case 2:
         return <AAppointmentsUsed doctor={true} />;
-      case 4:
-        return <Access setAccess={setAccess} />;
-      case 5:
+      case 3:
         return <ChangePassword />;
       default:
         return;
     }
   };
+
+  if (!doctor) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Layout>
@@ -39,9 +55,9 @@ function ADoctorProfile() {
         >
           <IoArrowBackOutline />
         </Link>
-        <h1 className="text-xl font-semibold">Dr. Daudi Mburuge</h1>
+        <h1 className="text-xl font-semibold">{doctor.fullName}</h1>
       </div>
-      <div className=" grid grid-cols-12 gap-6 my-8 items-start">
+      <div className="grid grid-cols-12 gap-6 my-8 items-start">
         <div
           data-aos="fade-right"
           data-aos-duration="1000"
@@ -49,15 +65,10 @@ function ADoctorProfile() {
           data-aos-offset="200"
           className="col-span-12 flex-colo gap-6 lg:col-span-4 bg-white rounded-xl border-[1px] border-border p-6 lg:sticky top-28"
         >
-          <img
-            src="/images/user1.png"
-            alt="setting"
-            className="w-40 h-40 rounded-full object-cover border border-dashed border-subMain"
-          />
           <div className="gap-2 flex-colo">
-            <h2 className="text-sm font-semibold">Dr. Daudi Mburuge</h2>
-            <p className="text-xs text-textGray">daudimburuge@gmail.com</p>
-            <p className="text-xs">+254 712 345 678</p>
+            <h2 className="text-sm font-semibold">{doctor.fullName}</h2>
+            <p className="text-xs text-textGray">{doctor.email}</p>
+            <p className="text-xs">{doctor.phoneNumber}</p>
           </div>
           {/* tabs */}
           <div className="flex-colo gap-3 px-2 2xl:px-12 w-full">
@@ -94,3 +105,4 @@ function ADoctorProfile() {
 }
 
 export default ADoctorProfile;
+

@@ -66,7 +66,7 @@ function UAddAppointmentModal({ closeModal, isOpen, datas }) {
         <div className="grid sm:grid-cols-12 gap-4 w-full items-center">
           <div className="sm:col-span-10">
             <Input
-              label="Patient Name"
+              label="Child Name"
               color={true}
               placeholder={
                 datas?.title

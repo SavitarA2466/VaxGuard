@@ -89,7 +89,7 @@ function UMedicineDosageModal({ closeModal, isOpen }) {
           <div className="flex w-full flex-col gap-4">
             <p className="text-black text-sm">Dosage</p>
             <div className="grid xs:grid-cols-3 gap-6 pb-6">
-              {UsortsDatas?.dosage?.map((item) => (
+              {sortsDatas?.dosage?.map((item) => (
                 <Checkbox
                   label={item.name}
                   checked={dosage?.find((i) => i.name === item.value)?.checked}

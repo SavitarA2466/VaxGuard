@@ -4,14 +4,38 @@ import { BiPlus } from 'react-icons/bi';
 import { FiEye } from 'react-icons/fi';
 import { toast } from 'react-hot-toast';
 import { RiDeleteBin6Line } from 'react-icons/ri';
-import { medicalRecodData } from '../../Components/Datas';
 import DMedicalRecodModal from '../../Components/Modals/D.MedicalRecodModal';
 import { useNavigate } from 'react-router-dom';
+
+const medicalRecodData = [
+  {
+    id: 1,
+    date: '13, Jan 2021',
+    data: [
+      {
+        id: 1,
+        title: 'Doctor',
+        value: '.......',
+      },
+      {
+        id: 2,
+        title: 'Service',
+        value: '0 - 4 Weeks',
+      },
+      {
+        id: 4,
+        title: 'Description',
+        value: '..',
+      },
+    ],
+  },
+];
 
 function DMedicalRecord() {
   const [isOpen, setIsOpen] = React.useState(false);
   const [datas, setDatas] = React.useState({});
   const navigate = useNavigate();
+
   return (
     <>
       {
@@ -29,15 +53,13 @@ function DMedicalRecord() {
       }
       <div className="flex flex-col gap-6">
         <div className="flex-btn gap-4">
-          <h1 className="text-sm font-medium sm:block hidden">
-            Medical Record
-          </h1>
+          <h1 className="text-sm font-medium sm:block hidden">Medical Record</h1>
           <div className="sm:w-1/4 w-full">
             <Button
               label="New Record"
               Icon={BiPlus}
               onClick={() => {
-                navigate(`/D.patients/visiting/2`);
+                navigate(`/D.patients/visiting/1`);
               }}
             />
           </div>
@@ -56,9 +78,7 @@ function DMedicalRecord() {
                   <span className="font-medium">{item?.title}:</span>{' '}
                   {
                     // if value character is more than 40, show only 40 characters
-                    item?.value?.length > 40
-                      ? `${item?.value?.slice(0, 40)}...`
-                      : item?.value
+                    item?.value?.length > 40 ? `${item?.value?.slice(0, 40)}...` : item?.value
                   }
                 </p>
               ))}

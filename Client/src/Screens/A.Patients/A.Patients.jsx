@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { MdOutlineCloudDownload } from 'react-icons/md';
 import Layout from '../../Layout/AdminLayout/A.index';
 import { memberData, sortsDatas } from '../../Components/Datas';
 import { Link, useNavigate } from 'react-router-dom';
@@ -7,29 +8,13 @@ import { BsCalendarMonth } from 'react-icons/bs';
 import { MdFilterList, MdOutlineCalendarMonth } from 'react-icons/md';
 import { toast } from 'react-hot-toast';
 import { Button, FromToDate, Select } from '../../Components/Form';
-import { APatientTable } from '../../Components/Tables';
+import { APatientTable } from '../../Components/Tables/A.PatientTable';
 
 function APatients() {
-  const [status, setStatus] = useState(sortsDatas.filterPatient[0]);
-  const [gender, setGender] = useState(sortsDatas.genderFilter[0]);
   const [dateRange, setDateRange] = useState([new Date(), new Date()]);
   const [startDate, endDate] = dateRange;
   const navigate = useNavigate();
 
-  const sorts = [
-    {
-      id: 2,
-      selected: status,
-      setSelected: setStatus,
-      datas: sortsDatas.filterPatient,
-    },
-    {
-      id: 3,
-      selected: gender,
-      setSelected: setGender,
-      datas: sortsDatas.genderFilter,
-    },
-  ];
   // boxes
   const boxes = [
     {
@@ -62,13 +47,6 @@ function APatients() {
 
   return (
     <Layout>
-      {/* add button */}
-      <Link
-        to="/A.patients/create"
-        className="w-16 animate-bounce h-16 border border-border z-50 bg-subMain text-white rounded-full flex-colo fixed bottom-8 right-12 button-fb"
-      >
-        <BiPlus className="text-2xl" />
-      </Link>
       <h1 className="text-xl font-semibold">Patients</h1>
       {/* boxes */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
@@ -101,43 +79,27 @@ function APatients() {
       <div
         data-aos="fade-up"
         data-aos-duration="1000"
-        data-aos-delay="10"
+        data-aos-delay="100"
         data-aos-offset="200"
         className="bg-white my-8 rounded-xl border-[1px] border-border p-5"
       >
-        <div className="grid lg:grid-cols-5 grid-cols-1 xs:grid-cols-2 md:grid-cols-3 gap-2">
-          <input
-            type="text"
-            placeholder='Search'
-            className="h-14 text-sm text-main rounded-md bg-dry border border-border px-4"
-          />
-          {/* sort  */}
-          {sorts.map((item) => (
-            <Select
-              key={item.id}
-              selectedPerson={item.selected}
-              setSelectedPerson={item.setSelected}
-              datas={item.datas}
-            >
-              <div className="h-14 w-full text-xs text-main rounded-md bg-dry border border-border px-4 flex items-center justify-between">
-                <p>{item.selected.name}</p>
-                <BiChevronDown className="text-xl" />
-              </div>
-            </Select>
-          ))}
-          {/* date */}
-          <FromToDate
-            startDate={startDate}
-            endDate={endDate}
-            bg="bg-dry"
-            onChange={(update) => setDateRange(update)}
-          />
+        {/* datas */}
+
+        <div className="grid md:grid-cols-6 sm:grid-cols-2 grid-cols-1 gap-2">
+          <div className="md:col-span-5 grid lg:grid-cols-4 items-center gap-6">
+            <input
+              type="text"
+              placeholder='Search'
+              className="h-14 w-full text-sm text-main rounded-md bg-dry border border-border px-4"
+            />
+          </div>
+
           {/* export */}
           <Button
-            label="Filter"
-            Icon={MdFilterList}
+            label="Export"
+            Icon={MdOutlineCloudDownload}
             onClick={() => {
-              toast.error('Filter data is not available yet');
+              toast.error('Exporting is not available yet');
             }}
           />
         </div>

@@ -43,25 +43,6 @@ function UMedicalRecodModal({ closeModal, isOpen, datas }) {
             />
           </div>
         </div>
-        {/* attachments */}
-        <div className="grid grid-cols-12 gap-4 w-full">
-          <div className="col-span-12 md:col-span-3">
-            <p className="text-sm font-medium">Attachments:</p>
-          </div>
-          <div className="col-span-12 md:col-span-9 border-[1px] border-border rounded-xl p-6 xs:grid-cols-2 md:grid-cols-4 grid gap-4">
-            {
-              // show attachments
-              datas?.attachments?.map((item) => (
-                <img
-                  key={item}
-                  src={item}
-                  alt="attachment"
-                  className="w-full md:h-32 object-cover rounded-md"
-                />
-              ))
-            }
-          </div>
-        </div>
 
           {/* export */}
           <Button

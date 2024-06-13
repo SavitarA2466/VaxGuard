@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const ChildSchema = new mongoose.Schema({
   fullName: {
@@ -21,14 +21,18 @@ const ChildSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  parent: {
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
+  },
   address: {
     type: String,
     required: true,
   },
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
-module.exports = mongoose.model('Child', ChildSchema);
+module.exports = mongoose.model("Child", ChildSchema);

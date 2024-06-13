@@ -1,10 +1,12 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Child = require('../models/Child');
+const Child = require("../models/Child");
 
 // Create a new child record
-router.post('/', async (req, res) => {
-  const { fullName, gender, dateOfBirth, bloodType, weight, address } = req.body;
+router.post("/:parentId", async (req, res) => {
+  const { fullName, gender, dateOfBirth, bloodType, weight, address } =
+    req.body;
+  const parent = req.params.parentId;
 
   try {
     const newChild = new Child({
@@ -14,6 +16,7 @@ router.post('/', async (req, res) => {
       bloodType,
       weight,
       address,
+      parent,
     });
 
     const savedChild = await newChild.save();
@@ -24,7 +27,7 @@ router.post('/', async (req, res) => {
 });
 
 // Get all child records
-router.get('/', async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const children = await Child.find();
     res.status(200).json(children);
@@ -33,11 +36,21 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get("/mine/:parentId", async (req, res) => {
+  try {
+    const parentId = req.params.parentId;
+    const children = await Child.find({ parent: parentId });
+    res.status(200).json(children);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
 // Get a specific child record by ID
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const child = await Child.findById(req.params.id);
-    if (!child) return res.status(404).json({ message: 'Child not found' });
+    if (!child) return res.status(404).json({ message: "Child not found" });
     res.status(200).json(child);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -45,8 +58,9 @@ router.get('/:id', async (req, res) => {
 });
 
 // Update a child record by ID
-router.put('/:id', async (req, res) => {
-  const { fullName, gender, dateOfBirth, bloodType, weight, address } = req.body;
+router.put("/:id", async (req, res) => {
+  const { fullName, gender, dateOfBirth, bloodType, weight, address } =
+    req.body;
 
   try {
     const updatedChild = await Child.findByIdAndUpdate(
@@ -55,7 +69,8 @@ router.put('/:id', async (req, res) => {
       { new: true }
     );
 
-    if (!updatedChild) return res.status(404).json({ message: 'Child not found' });
+    if (!updatedChild)
+      return res.status(404).json({ message: "Child not found" });
     res.status(200).json(updatedChild);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -63,11 +78,12 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete a child record by ID
-router.delete('/:id', async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const deletedChild = await Child.findByIdAndDelete(req.params.id);
-    if (!deletedChild) return res.status(404).json({ message: 'Child not found' });
-    res.status(200).json({ message: 'Child deleted successfully' });
+    if (!deletedChild)
+      return res.status(404).json({ message: "Child not found" });
+    res.status(200).json({ message: "Child deleted successfully" });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -76,9 +92,9 @@ router.delete('/:id', async (req, res) => {
 module.exports = router;
 
 // Get all child names
-router.get('/names', async (req, res) => {
+router.get("/names", async (req, res) => {
   try {
-    const children = await Child.find({}, 'fullName'); // Only select the fullName field
+    const children = await Child.find({}, "fullName"); // Only select the fullName field
     res.status(200).json(children);
   } catch (error) {
     res.status(400).json({ message: error.message });

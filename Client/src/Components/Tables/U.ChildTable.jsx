@@ -6,6 +6,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import UAddChildModal from "../../Components/Modals/U.AddChildModal";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMyChildren } from "../../hooks/useMyChildren";
 
 const thclass = "text-start text-sm font-medium py-3 px-2 whitespace-nowrap";
 const tdclass = "text-start text-sm py-4 px-2 whitespace-nowrap";
@@ -15,38 +16,7 @@ export function UChildTable() {
   const [selectedChild, setSelectedChild] = useState(null);
   const [editChildId, setEditChildId] = useState(null);
 
-  const calculateAge = (dob) => {
-    const today = new Date();
-    const birthDate = new Date(dob);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birthDate.getDate())
-    ) {
-      age--;
-    }
-    return age;
-  };
-
-  async function fetchData() {
-    try {
-      const response = await axios.get("http://localhost:5000/api/children");
-      const childrenData = response.data.map((child) => ({
-        ...child,
-        age: calculateAge(child.dateOfBirth),
-      }));
-      return childrenData;
-    } catch (error) {
-      console.error("Error fetching children:", error);
-      toast.error("Error fetching children");
-    }
-  }
-
-  const { data } = useQuery({
-    queryKey: ["children"],
-    queryFn: fetchData,
-  });
+  const { data } = useMyChildren();
 
   const qc = useQueryClient();
 

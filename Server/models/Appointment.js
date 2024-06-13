@@ -1,36 +1,42 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+
+const Schema = mongoose.Schema;
 
 const appointmentSchema = new mongoose.Schema({
-  childName: {
-    type: String,
-    required: true,
+  child: {
+    type: Schema.ObjectId,
+    ref: "Child",
   },
-  purposeOfVisit:{
-    type: String,
-    required: true,
+  purposeOfVisit: {
+    type: Schema.ObjectId,
+    ref: "Service",
   },
   dateOfVisit: {
     type: Date,
     required: true,
   },
-  startTime:{
+  bookedBy: {
+    type: Schema.ObjectId,
+    ref: "User",
+  },
+  startTime: {
     type: Date,
     required: true,
   },
   doctor: {
-    type: String,
-    required: true,
+    type: Schema.ObjectId,
+    ref: "Doctor",
   },
   description: {
     type: String,
     required: true,
   },
-  shareWithEmail:  {
+  shareWithEmail: {
     type: Boolean,
     default: false,
   },
 });
 
-const Appointment = mongoose.model('Appointment', appointmentSchema);
+const Appointment = mongoose.model("Appointment", appointmentSchema);
 
 module.exports = Appointment;

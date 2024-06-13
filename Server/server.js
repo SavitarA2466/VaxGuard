@@ -11,6 +11,8 @@ const dosageRoutes = require("./routes/dosageRoutes");
 const appointmentRoutes = require("./routes/appointmentRoute");
 const UseVaccineRouter = require("./routes/useVaccineRoutes");
 const medicalRecordRouter = require("./routes/medicalRecordRoutes");
+const User = require("./models/User");
+const bcrypt = require("bcryptjs");
 
 // Initialize Express app
 const app = express();
@@ -30,6 +32,24 @@ mongoose
   });
 
 // Routes
+
+app.get("/api/seed", async (req, res) => {
+  const hashed = await bcrypt.hash("123456", 10);
+
+  const user = new User({
+    firstName: "Admin",
+    lastName: "Super",
+    email: "admin@app.com",
+    phoneNumber: "0774336622",
+    password: hashed,
+    role: "admin",
+  });
+
+  await user.save();
+
+  return res.send(user);
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/doctors", doctorsRouter);
 app.use("/api/services", serviceRoutes);

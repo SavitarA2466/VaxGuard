@@ -1,12 +1,12 @@
-import React, { useEffect } from "react";
-import { BiDotsHorizontalRounded } from "react-icons/bi";
+import React from "react";
 import { FiEdit, FiEye } from "react-icons/fi";
-import { RiDeleteBin6Line, RiDeleteBinLine } from "react-icons/ri";
+import { RiDeleteBin6Line } from "react-icons/ri";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { useState } from "react";
 import Modal from "../Modals/A.AddEditServiceModal";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { useServices } from "../../hooks/useServices";
 
 const thclass = "text-start text-sm font-medium py-3 px-2 whitespace-nowrap";
 const tdclass = "text-start text-sm py-4 px-2 whitespace-nowrap";
@@ -16,24 +16,10 @@ export function AServiceTable() {
   const [selectedService, setSelectedService] = useState(null);
   const [editServiceId, setEditServiceId] = useState(null);
 
-  async function fetchData() {
-    try {
-      const response = await axios.get("http://localhost:5000/api/services");
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching services:", error);
-      toast.error("Error fetching services");
-    }
-  }
-
-  const { data } = useQuery({
-    queryKey: ["all_services"],
-    queryFn: fetchData,
-  });
+  const { data } = useServices();
 
   const qc = useQueryClient();
 
-  console.log(data);
   const handleEdit = (item) => {
     setSelectedService(item);
     setEditServiceId(item._id);

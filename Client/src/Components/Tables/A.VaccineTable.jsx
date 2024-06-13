@@ -1,11 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { FiEdit } from "react-icons/fi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { useState } from "react";
 import Modal from "../../Components/Modals/A.AddEditVaccine";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { useVaccines } from "../../hooks/useVaccines";
 
 const thclass = "text-start text-sm font-medium py-3 px-2 whitespace-nowrap";
 const tdclass = "text-start text-sm py-4 px-2 whitespace-nowrap";
@@ -15,20 +16,7 @@ export function AVaccineTable() {
   const [selectedVaccine, setSelectedVaccine] = useState(null);
   const [editItemId, setEditItemId] = useState(null);
 
-  async function fetchData() {
-    try {
-      const response = await axios.get("http://localhost:5000/api/vaccines");
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching vaccines:", error);
-      toast.error("Error fetching vaccines");
-    }
-  }
-
-  const { data } = useQuery({
-    queryKey: ["vaccines"],
-    queryFn: fetchData,
-  });
+  const { data } = useVaccines();
 
   const qc = useQueryClient();
 

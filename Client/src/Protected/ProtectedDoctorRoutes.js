@@ -1,5 +1,4 @@
-import { Navigate } from "react-big-calendar";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, Navigate } from "react-router-dom";
 import useGlobalStore from "../globalStore";
 
 const ProtectedDoctorRoutes = (props) => {

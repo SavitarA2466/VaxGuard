@@ -6,7 +6,8 @@ import axios from "axios";
 import { useState } from "react";
 import Modal from "../../Components/Modals/A.AddDoctorModal";
 import { Link } from "react-router-dom";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { useDoctors } from "../../hooks/useDoctors";
 
 const thclass = "text-start text-sm font-medium py-3 px-2 whitespace-nowrap";
 const tdclass = "text-start text-sm py-4 px-2 whitespace-nowrap";
@@ -16,20 +17,7 @@ export function ADoctorsTable() {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [editDoctorId, setEditDoctorId] = useState(null);
 
-  async function fetchData() {
-    try {
-      const response = await axios.get("http://localhost:5000/api/doctors");
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching doctors:", error);
-      toast.error("Error fetching doctors");
-    }
-  }
-
-  const { data } = useQuery({
-    queryKey: ["all_doctors"],
-    queryFn: fetchData,
-  });
+  const { data } = useDoctors();
 
   const qc = useQueryClient();
 

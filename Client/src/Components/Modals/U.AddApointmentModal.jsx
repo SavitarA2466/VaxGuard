@@ -1,37 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import Modal from './Modal';
+import React, { useEffect, useState } from "react";
+import Modal from "./Modal";
 import {
   Button,
   Checkbox,
   DatePickerComp,
-  Input,
   Select,
   Textarea,
   TimePickerComp,
-} from '../Form';
-import { BiChevronDown, BiPlus } from 'react-icons/bi';
-import { memberData, servicesData, sortsDatas } from '../Datas';
-import { HiOutlineCheckCircle } from 'react-icons/hi';
-import { toast } from 'react-hot-toast';
-import UPatientMedicineServiceModal from './U.PatientMedicineServiceModal';
-
-// edit member data
-const doctorsData = memberData.map((item) => {
-  return {
-    id: item.id,
-    name: item.title,
-  };
-});
+} from "../Form";
+import { BiChevronDown } from "react-icons/bi";
+import { HiOutlineCheckCircle } from "react-icons/hi";
+import { toast } from "react-hot-toast";
+import UPatientMedicineServiceModal from "./U.PatientMedicineServiceModal";
+import { useDoctors } from "../../hooks/useDoctors";
+import { useServices } from "../../hooks/useServices";
+import { useMyChildren } from "../../hooks/useMyChildren";
+import useGlobalStore from "../../globalStore";
+import axios from "axios";
 
 function UAddAppointmentModal({ closeModal, isOpen, datas }) {
-  const [services, setServices] = useState(servicesData[0]);
+  const [services, setServices] = useState(null);
   const [startDate, setStartDate] = useState(new Date());
   const [startTime, setStartTime] = useState(new Date());
   const [endTime, setEndTime] = useState(new Date());
-  const [status, setStatus] = useState(sortsDatas.status[0]);
-  const [doctors, setDoctors] = useState(doctorsData[0]);
-  const [shares, setShares] = useState({email: false,});
-  const [open, setOpen] = useState(false);
+  const [child, setChild] = useState(null);
+  const [doctors, setDoctors] = useState(null);
+  const [shares, setShares] = useState({ email: false });
+  const [description, setDescription] = useState(false);
 
   // on change share
   const onChangeShare = (e) => {
@@ -48,57 +43,77 @@ function UAddAppointmentModal({ closeModal, isOpen, datas }) {
     }
   }, [datas]);
 
+  const { data: doctorsList } = useDoctors();
+  const { data: servicesList } = useServices();
+  const { data: myChildren } = useMyChildren();
+  const { user } = useGlobalStore();
+
+  async function createAppointment() {
+    const data = {
+      child: child.id,
+      purposeOfVisit: services._id,
+      dateOfVisit: startDate,
+      bookedBy: user._id,
+      startTime,
+      doctor: doctors.id,
+      description,
+    };
+    const res = await axios.post(
+      "http://localhost:5000/api/appointments",
+      data
+    );
+    if (res.status === 201) {
+      toast.success("Appointment created successfully");
+    } else {
+      toast.error("Appointment creation failed");
+    }
+  }
+
+  console.log(child, services, doctors);
+
   return (
     <Modal
       closeModal={closeModal}
       isOpen={isOpen}
-      title={datas?.title ? 'Edit Appointment' : 'New Appointment'}
-      width={'max-w-3xl'}
+      title={datas?.title ? "Edit Appointment" : "New Appointment"}
+      width={"max-w-3xl"}
     >
-      {open && (
-        <UPatientMedicineServiceModal
-          closeModal={() => setOpen(!isOpen)}
-          isOpen={open}
-          patient={true}
-        />
-      )}
-      <div className="flex-colo gap-6">
-        <div className="grid sm:grid-cols-12 gap-4 w-full items-center">
-          <div className="sm:col-span-10">
-            <Input
-              label="Child Name"
-              color={true}
-              placeholder={
-                datas?.title
-                  ? datas.title
-                  : 'Select Patient and patient name will appear here'
-              }
-            />
-          </div>
-          <button
-            onClick={() => setOpen(!open)}
-            className="text-subMain flex-rows border border-dashed border-subMain text-sm py-3.5 sm:mt-6 sm:col-span-2 rounded"
-          >
-            <BiPlus /> Add
-          </button>
-        </div>
-
-        <div className="grid sm:grid-cols-2 gap-4 w-full">
-          <div className="flex w-full flex-col gap-3">
-            <p className="text-black text-sm">Purpose of visit</p>
-            <Select
-              selectedPerson={services}
-              setSelectedPerson={setServices}
-              datas={servicesData}
-            >
-              <div className="w-full flex-btn text-textGray text-sm p-4 border border-border font-light rounded-lg focus:border focus:border-subMain">
-                {services.name} <BiChevronDown className="text-xl" />
-              </div>
-            </Select>
+      <div className="gap-6 flex-colo">
+        <div className="grid w-full gap-4 sm:grid-cols-2">
+          <div className="flex flex-col w-full gap-3">
+            <p className="text-sm text-black">Select Your Child</p>
+            {myChildren && (
+              <Select
+                selectedPerson={child}
+                setSelectedPerson={setChild}
+                datas={myChildren.map((c) => ({ id: c._id, name: c.fullName }))}
+              >
+                <div className="w-full p-4 text-sm font-light border rounded-lg flex-btn text-textGray border-border focus:border focus:border-subMain">
+                  Select Child <BiChevronDown className="text-xl" />
+                </div>
+              </Select>
+            )}
           </div>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-4 w-full">
+        <div className="grid w-full gap-4 sm:grid-cols-2">
+          <div className="flex flex-col w-full gap-3">
+            <p className="text-sm text-black">Purpose of visit</p>
+            {servicesList && (
+              <Select
+                selectedPerson={services}
+                setSelectedPerson={setServices}
+                datas={servicesList}
+              >
+                <div className="w-full p-4 text-sm font-light border rounded-lg flex-btn text-textGray border-border focus:border focus:border-subMain">
+                  Select Service <BiChevronDown className="text-xl" />
+                </div>
+              </Select>
+            )}
+          </div>
+        </div>
+
+        <div className="grid w-full gap-4 sm:grid-cols-2">
           <DatePickerComp
             label="Date of visit"
             startDate={startDate}
@@ -112,37 +127,39 @@ function UAddAppointmentModal({ closeModal, isOpen, datas }) {
         </div>
 
         {/* status && doctor */}
-        <div className="grid sm:grid-cols-2 gap-4 w-full">
-          <div className="flex w-full flex-col gap-3">
-            <p className="text-black text-sm">Doctor</p>
-            <Select
-              selectedPerson={doctors}
-              setSelectedPerson={setDoctors}
-              datas={doctorsData}
-            >
-              <div className="w-full flex-btn text-textGray text-sm p-4 border border-border font-light rounded-lg focus:border focus:border-subMain">
-                {doctors.name} <BiChevronDown className="text-xl" />
-              </div>
-            </Select>
+        <div className="grid w-full gap-4 sm:grid-cols-2">
+          <div className="flex flex-col w-full gap-3">
+            <p className="text-sm text-black">Doctor</p>
+            {doctorsList && (
+              <Select
+                selectedPerson={doctors}
+                setSelectedPerson={setDoctors}
+                datas={doctorsList.map((d) => ({
+                  id: d._id,
+                  name: d.fullName,
+                }))}
+              >
+                <div className="w-full p-4 text-sm font-light border rounded-lg flex-btn text-textGray border-border focus:border focus:border-subMain">
+                  Select Doctor <BiChevronDown className="text-xl" />
+                </div>
+              </Select>
+            )}
           </div>
         </div>
 
         {/* des */}
         <Textarea
           label="Description"
-          placeholder={
-            datas?.message
-              ? datas.message
-              : 'She will be coming for a checkup.....'
-          }
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
           color={true}
           rows={5}
         />
 
         {/* share */}
-        <div className="flex-col flex gap-8 w-full">
-          <p className="text-black text-sm">Share with patient via</p>
-          <div className="flex flex-wrap sm:flex-nowrap gap-4">
+        <div className="flex flex-col w-full gap-8">
+          <p className="text-sm text-black">Share with patient via</p>
+          <div className="flex flex-wrap gap-4 sm:flex-nowrap">
             <Checkbox
               name="email"
               checked={shares.email}
@@ -152,19 +169,17 @@ function UAddAppointmentModal({ closeModal, isOpen, datas }) {
           </div>
         </div>
         {/* buttones */}
-        <div className="grid sm:grid-cols-2 gap-4 w-full">
+        <div className="grid w-full gap-4 sm:grid-cols-2">
           <button
             onClick={closeModal}
-            className="bg-red-600 bg-opacity-5 text-red-600 text-sm p-4 rounded-lg font-light"
+            className="p-4 text-sm font-light text-red-600 bg-red-600 rounded-lg bg-opacity-5"
           >
-            {datas?.title ? 'Discard' : 'Cancel'}
+            {datas?.title ? "Discard" : "Cancel"}
           </button>
           <Button
             label="Save"
             Icon={HiOutlineCheckCircle}
-            onClick={() => {
-              toast.error('This feature is not available yet');
-            }}
+            onClick={createAppointment}
           />
         </div>
       </div>
@@ -173,4 +188,3 @@ function UAddAppointmentModal({ closeModal, isOpen, datas }) {
 }
 
 export default UAddAppointmentModal;
-   

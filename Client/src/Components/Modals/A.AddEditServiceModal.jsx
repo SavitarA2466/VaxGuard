@@ -1,22 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Modal from './Modal';
-import { Button, Input, Switchi, Textarea } from '../Form';
-import { HiOutlineCheckCircle } from 'react-icons/hi';
-import { toast } from 'react-hot-toast';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import Modal from "./Modal";
+import { Button, Input, Switchi, Textarea } from "../Form";
+import { HiOutlineCheckCircle } from "react-icons/hi";
+import { toast } from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 function AAddEditServiceModal({ closeModal, isOpen, datas }) {
   const [check, setCheck] = useState(false);
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
 
   useEffect(() => {
     if (datas) {
-      setName(datas.name || '');
-      setDescription(datas.description || '');
+      setName(datas.name || "");
+      setDescription(datas.description || "");
       setCheck(datas.status || false);
     }
   }, [datas]);
+
+  const qc = useQueryClient();
 
   const handleSave = async () => {
     try {
@@ -26,18 +29,20 @@ function AAddEditServiceModal({ closeModal, isOpen, datas }) {
           description,
           status: check,
         });
-        toast.success('Service updated successfully');
+        qc.invalidateQueries({ queryKey: ["all_services"] });
+        toast.success("Service updated successfully");
       } else {
-        await axios.post('http://localhost:5000/api/services', {
+        await axios.post("http://localhost:5000/api/services", {
           name,
           description,
           status: check,
         });
-        toast.success('Service created successfully');
+        qc.invalidateQueries({ queryKey: ["all_services"] });
+        toast.success("Service created successfully");
       }
       closeModal();
     } catch (error) {
-      toast.error('Error saving service');
+      toast.error("Error saving service");
     }
   };
 
@@ -45,10 +50,10 @@ function AAddEditServiceModal({ closeModal, isOpen, datas }) {
     <Modal
       closeModal={closeModal}
       isOpen={isOpen}
-      title={datas?.name ? 'Edit Service' : 'New Service'}
-      width={'max-w-3xl'}
+      title={datas?.name ? "Edit Service" : "New Service"}
+      width={"max-w-3xl"}
     >
-      <div className="flex-colo gap-6">
+      <div className="gap-6 flex-colo">
         <Input
           label="Service Name"
           color={true}
@@ -64,22 +69,22 @@ function AAddEditServiceModal({ closeModal, isOpen, datas }) {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
-        <div className="flex items-center gap-2 w-full">
+        <div className="flex items-center w-full gap-2">
           <Switchi
             label="Status"
             checked={check}
             onChange={() => setCheck(!check)}
           />
-          <p className={`text-sm ${check ? 'text-subMain' : 'text-textGray'}`}>
-            {check ? 'Enabled' : 'Disabled'}
+          <p className={`text-sm ${check ? "text-subMain" : "text-textGray"}`}>
+            {check ? "Enabled" : "Disabled"}
           </p>
         </div>
-        <div className="grid sm:grid-cols-2 gap-4 w-full">
+        <div className="grid w-full gap-4 sm:grid-cols-2">
           <button
             onClick={closeModal}
-            className="bg-red-600 bg-opacity-5 text-red-600 text-sm p-4 rounded-lg font-light"
+            className="p-4 text-sm font-light text-red-600 bg-red-600 rounded-lg bg-opacity-5"
           >
-            {datas?.name ? 'Discard' : 'Cancel'}
+            {datas?.name ? "Discard" : "Cancel"}
           </button>
           <Button
             label="Save"
@@ -93,4 +98,3 @@ function AAddEditServiceModal({ closeModal, isOpen, datas }) {
 }
 
 export default AAddEditServiceModal;
-

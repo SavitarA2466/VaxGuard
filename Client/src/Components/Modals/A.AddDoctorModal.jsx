@@ -1,18 +1,21 @@
-import React, { useState } from 'react';
-import Modal from './Modal';
-import { Button, Input } from '../Form';
-import { HiOutlineCheckCircle } from 'react-icons/hi';
-import { toast } from 'react-hot-toast';
-import axios from 'axios';
+import React, { useState } from "react";
+import Modal from "./Modal";
+import { Button, Input } from "../Form";
+import { HiOutlineCheckCircle } from "react-icons/hi";
+import { toast } from "react-hot-toast";
+import axios from "axios";
+import { useQueryClient } from "@tanstack/react-query";
 
 function AAddDoctorModal({ closeModal, isOpen, doctor, datas }) {
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phoneNumber: '',
-    password: '',
-    role: '', // New field for role
+    fullName: "",
+    email: "",
+    phoneNumber: "",
+    password: "",
+    role: "", // New field for role
   });
+
+  const qc = useQueryClient();
 
   const handleInputChange = (e) => {
     setFormData({
@@ -25,19 +28,26 @@ function AAddDoctorModal({ closeModal, isOpen, doctor, datas }) {
     e.preventDefault();
 
     // Check if all required fields are filled
-    if (!formData.fullName.trim() || !formData.email.trim() || !formData.phoneNumber.trim() || !formData.password.trim() || !formData.role.trim()) {
-      toast.error('Please fill in all the fields');
+    if (
+      !formData.fullName.trim() ||
+      !formData.email.trim() ||
+      !formData.phoneNumber.trim() ||
+      !formData.password.trim() ||
+      !formData.role.trim()
+    ) {
+      toast.error("Please fill in all the fields");
       return;
     }
 
     try {
       // Send the form data to the backend
-      await axios.post('http://localhost:5000/api/doctors', formData);
-      toast.success('Doctor added successfully');
+      await axios.post("http://localhost:5000/api/doctors", formData);
+      qc.invalidateQueries({ queryKey: ["all_doctors"] });
+      toast.success("Doctor added successfully");
       closeModal();
     } catch (error) {
-      console.error('Error adding doctor:', error.response.data);
-      toast.error('Error adding doctor');
+      console.error("Error adding doctor:", error.response.data);
+      toast.error("Error adding doctor");
     }
   };
 
@@ -45,12 +55,12 @@ function AAddDoctorModal({ closeModal, isOpen, doctor, datas }) {
     <Modal
       closeModal={closeModal}
       isOpen={isOpen}
-      title={doctor ? 'Add Doctor' : datas?.id ? 'Edit Stuff' : 'Add Stuff'}
-      width={'max-w-3xl'}
+      title={doctor ? "Add Doctor" : datas?.id ? "Edit Stuff" : "Add Stuff"}
+      width={"max-w-3xl"}
       onSubmit={handleSubmit}
     >
-      <div className="flex-colo gap-6">
-        <div className="grid sm:grid-cols-1 gap-4 w-full">
+      <div className="gap-6 flex-colo">
+        <div className="grid w-full gap-4 sm:grid-cols-1">
           <Input
             label="Full Name"
             color={true}
@@ -61,7 +71,7 @@ function AAddDoctorModal({ closeModal, isOpen, doctor, datas }) {
           />
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-4 w-full">
+        <div className="grid w-full gap-4 sm:grid-cols-2">
           <Input
             label="Email"
             color={true}
@@ -87,8 +97,10 @@ function AAddDoctorModal({ closeModal, isOpen, doctor, datas }) {
         />
 
         {/* Dropdown for Role */}
-        <div className="grid sm:grid-cols-2 gap-4 w-full">
-          <label className="block text-sm font-medium text-gray-700">Role</label>
+        <div className="grid w-full gap-4 sm:grid-cols-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Role
+          </label>
           <select
             name="role"
             value={formData.role}
@@ -101,14 +113,18 @@ function AAddDoctorModal({ closeModal, isOpen, doctor, datas }) {
           </select>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-4 w-full">
+        <div className="grid w-full gap-4 sm:grid-cols-2">
           <button
             onClick={closeModal}
-            className="bg-red-600 bg-opacity-5 text-red-600 text-sm p-4 rounded-lg font-light"
+            className="p-4 text-sm font-light text-red-600 bg-red-600 rounded-lg bg-opacity-5"
           >
             Cancel
           </button>
-          <Button label="Save" Icon={HiOutlineCheckCircle} onClick={handleSubmit} />
+          <Button
+            label="Save"
+            Icon={HiOutlineCheckCircle}
+            onClick={handleSubmit}
+          />
         </div>
       </div>
     </Modal>

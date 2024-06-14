@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const Child = require("../models/Child");
+const Doctor = require("../models/doctor");
+const Appointment = require("../models/Appointment");
+const { default: mongoose } = require("mongoose");
 
 // Create a new child record
 router.post("/:parentId", async (req, res) => {
@@ -58,6 +61,22 @@ router.get("/mine/:parentId", async (req, res) => {
     const parentId = req.params.parentId;
     const children = await Child.find({ parent: parentId });
     res.status(200).json(children);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+router.get("/doctor/:docId", async (req, res) => {
+  try {
+    const docId = req.params.docId;
+    const doc = await Doctor.findOne({
+      user: docId,
+    });
+    const appointments = await Appointment.find({
+      doctor: doc,
+    }).populate(["child", "bookedBy", "purposeOfVisit"]);
+
+    res.status(200).json(appointments);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

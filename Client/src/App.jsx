@@ -123,7 +123,7 @@ function App() {
               <Route path="/doctorDashboard" element={<DoctorDashboard />} />
               <Route path="/D.Patients" element={<DoctorPatients />} />
               <Route
-                path="/D.Patients/D.PatientProfile"
+                path="/D.Patients/:id"
                 element={<DoctorPatientProfile />}
               />
               <Route
